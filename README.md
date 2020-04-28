@@ -14,7 +14,7 @@ The following components are available in this repo:
 | Component | Description | Folder | Language | 
 |-----------|-------------|--------|----------|
 | datacatalog-connectors-commons | Commons code shared by all connectors. | [./datacatalog-connectors-commons](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/master/datacatalog-connectors-commons) | Python |
-| datacatalog-connectors-test-commons | Commons test code shared by all connectors. | [./datacatalog-connectors-test-commons](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/master/datacatalog-connectors-test-commons) | Python |
+| datacatalog-connectors-test-commons | Commons test code shared by all connectors. | [./datacatalog-connectors-commons-test](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/master/datacatalog-connectors-commons-test) | Python |
 
 The following sample codes are available:
 
