@@ -1,0 +1,12 @@
+{
+    "tpch": {
+        "database_name": "tpch",
+        "database_creator": "DBC",
+        "database_owner": "DBC",
+        "database_desc": null,
+        "database_create_time": "2018-07-20 13:24:11",
+        "database_update_time": "2018-07-27 18:47:19",
+        "database_update_user": "DBC",
+        "tables_dict": {}
+    }
+}

@@ -1,0 +1,111 @@
+{
+    "tpch": {
+        "database_name": "tpch",
+        "database_creator": "DBC",
+        "database_owner": "DBC",
+        "database_desc": null,
+        "database_create_time": "2018-07-20 13:24:11",
+        "database_update_time": "2018-07-27 18:47:19",
+        "database_update_user": "DBC",
+        "tables_dict": {
+            "customer": {
+                "table_id": "customer",
+                "database_name": "tpch",
+                "table_name": "customer",
+                "table_creator": "DBC",
+                "table_desc": null,
+                "table_create_time": "2018-07-27 18:23:27",
+                "table_update_time": "2018-07-27 18:23:27",
+                "table_update_user": "DBC",
+                "table_uri": "customer",
+                "columns": [
+                    {
+                        "column_id": 1030,
+                        "column_name": "C_ACCTBAL",
+                        "column_creator": "DBC",
+                        "column_desc": null,
+                        "column_create_time": "2018-07-27 18:23:27",
+                        "column_update_time": "2018-07-27 18:23:27",
+                        "column_update_user": "DBC",
+                        "column_format": "--------------.99",
+                        "column_title": null,
+                        "column_type": "D",
+                        "column_length": 8,
+                        "column_default_value": null,
+                        "column_nullable": "N",
+                        "column_decimal_total_digits": 15.0,
+                        "column_decimal_fractional_digits": 2.0
+                    },
+                    {
+                        "column_id": 1027,
+                        "column_name": "C_ADDRESS",
+                        "column_creator": "DBC",
+                        "column_desc": null,
+                        "column_create_time": "2018-07-27 18:23:27",
+                        "column_update_time": "2018-07-27 18:23:27",
+                        "column_update_user": "DBC",
+                        "column_format": "X(40)",
+                        "column_title": null,
+                        "column_type": "CV",
+                        "column_length": 40,
+                        "column_default_value": null,
+                        "column_nullable": "N",
+                        "column_decimal_total_digits": null,
+                        "column_decimal_fractional_digits": null
+                    },
+                    {
+                        "column_id": 1032,
+                        "column_name": "C_COMMENT",
+                        "column_creator": "DBC",
+                        "column_desc": null,
+                        "column_create_time": "2018-07-27 18:23:27",
+                        "column_update_time": "2018-07-27 18:23:27",
+                        "column_update_user": "DBC",
+                        "column_format": "X(117)",
+                        "column_title": null,
+                        "column_type": "CV",
+                        "column_length": 117,
+                        "column_default_value": null,
+                        "column_nullable": "N",
+                        "column_decimal_total_digits": null,
+                        "column_decimal_fractional_digits": null
+                    },
+                    {
+                        "column_id": 1025,
+                        "column_name": "C_CUSTKEY",
+                        "column_creator": "DBC",
+                        "column_desc": null,
+                        "column_create_time": "2018-07-27 18:23:27",
+                        "column_update_time": "2018-07-27 18:23:27",
+                        "column_update_user": "DBC",
+                        "column_format": "-(10)9",
+                        "column_title": null,
+                        "column_type": "I",
+                        "column_length": 4,
+                        "column_default_value": null,
+                        "column_nullable": "N",
+                        "column_decimal_total_digits": null,
+                        "column_decimal_fractional_digits": null
+                    },
+                    {
+                        "column_id": 1031,
+                        "column_name": "C_MKTSEGMENT",
+                        "column_creator": "DBC",
+                        "column_desc": null,
+                        "column_create_time": "2018-07-27 18:23:27",
+                        "column_update_time": "2018-07-27 18:23:27",
+                        "column_update_user": "DBC",
+                        "column_format": "X(10)",
+                        "column_title": null,
+                        "column_type": "CF",
+                        "column_length": 10,
+                        "column_default_value": null,
+                        "column_nullable": "N",
+                        "column_decimal_total_digits": null,
+                        "column_decimal_fractional_digits": null
+                    }
+                ]
+            }
+        }
+    }
+}
