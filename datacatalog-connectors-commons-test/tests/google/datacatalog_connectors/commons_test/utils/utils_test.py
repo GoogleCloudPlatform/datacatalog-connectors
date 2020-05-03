@@ -21,5 +21,5 @@ from google.datacatalog_connectors.commons_test import utils
 
 class UtilsTestCase(unittest.TestCase):
 
-    def test_instance(self):
+    def test_instance_should_succeed(self):
         utils.Utils()
