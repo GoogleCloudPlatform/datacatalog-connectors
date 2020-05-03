@@ -1,0 +1,15 @@
+# Add 'repo' label to any root file changes
+repo:
+  - ./*
+  
+datacatalog-connectors-commons:
+  - datacatalog-connectors-commons/*
+  - datacatalog-connectors-commons/**/*
+
+datacatalog-connectors-commons-test:
+  - datacatalog-connectors-commons-test/*
+  - datacatalog-connectors-commons-test/**/*
+
+# Add 'test' label to any change to test.py files
+test:
+  - ./**/*.test.py
