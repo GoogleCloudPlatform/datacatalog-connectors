@@ -4,6 +4,8 @@ This repository contains commons code used by the Data Catalog connectors. Also 
 
 **Disclaimer: This is not an officially supported Google product.**
 
+![Python package](https://github.com/GoogleCloudPlatform/datacatalog-connectors/workflows/Python%20package/badge.svg?branch=master)
+
 ## Project structure
 
 Each subfolder contains a Python package. Please check components' README files for
