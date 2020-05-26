@@ -190,11 +190,14 @@ class DataCatalogFacade:
         :param tag_template: A Tag Template object.
         :return: The created Tag Template.
         """
-        return self.__datacatalog.create_tag_template(
+        created_tag_template = self.__datacatalog.create_tag_template(
             parent=datacatalog.DataCatalogClient.location_path(
                 self.__project_id, location_id),
             tag_template_id=tag_template_id,
             tag_template=tag_template)
+
+        logging.info('Tag Template created: %s', created_tag_template.name)
+        return created_tag_template
 
     def get_tag_template(self, name):
         """Retrieves a Data Catalog Tag Template.
@@ -247,6 +250,9 @@ class DataCatalogFacade:
             return
 
         persisted_tags = self.list_tags(entry.name)
+
+        # Fetch GRPCIterator.
+        persisted_tags = [tag for tag in persisted_tags]
 
         for tag in tags:
             logging.info('Processing Tag from Template: %s ...', tag.template)

@@ -21,7 +21,7 @@ release_status = 'Development Status :: 3 - Alpha'
 
 setuptools.setup(
     name='datacatalog-connectors-commons',
-    version='1.0.0',
+    version='1.0.1',
     author='Google LLC',
     description='Common resources for Data Catalog connectors',
     packages=setuptools.find_packages(where='./src'),
