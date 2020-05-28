@@ -260,11 +260,12 @@ class DataCatalogFacade:
             tag_to_create = tag
             tag_to_update = None
             for persisted_tag in persisted_tags:
-                if tag.template == persisted_tag.template:
+                if tag.template == persisted_tag.template and tag.column == persisted_tag.column:
                     tag_to_create = None
                     tag.name = persisted_tag.name
                     if not self.__tags_fields_are_equal(tag, persisted_tag):
                         tag_to_update = tag
+                    break
 
             if tag_to_create:
                 created_tag = self.create_tag(entry.name, tag_to_create)
