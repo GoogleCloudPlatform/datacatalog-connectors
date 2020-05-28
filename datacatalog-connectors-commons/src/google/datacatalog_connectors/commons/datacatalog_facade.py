@@ -260,7 +260,9 @@ class DataCatalogFacade:
             tag_to_create = tag
             tag_to_update = None
             for persisted_tag in persisted_tags:
-                if tag.template == persisted_tag.template and tag.column == persisted_tag.column:
+                if tag.template == persisted_tag.template and \
+                   tag.column == persisted_tag.column:
+
                     tag_to_create = None
                     tag.name = persisted_tag.name
                     if not self.__tags_fields_are_equal(tag, persisted_tag):
