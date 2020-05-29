@@ -16,10 +16,9 @@
 
 import unittest
 
-from google.datacatalog_connectors.commons import prepare
 import mock
-
 from google.cloud.datacatalog import types
+from google.datacatalog_connectors.commons import prepare
 
 
 class EntryRelationshipMapperTest(unittest.TestCase):
@@ -51,6 +50,50 @@ class EntryRelationshipMapperTest(unittest.TestCase):
             'https://console.cloud.google.com/datacatalog/{}'.format(
                 parent_entry.name),
             child_tag.fields['parent_entry'].string_value)
+
+    def test_fulfill_multiple_tags_same_field_should_resolve_valid_mapping(
+            self):
+        parent_id = 'test_parent'
+        parent_entry = self.__make_fake_entry(parent_id, 'parent')
+        parent_tag = self.__make_fake_tag(string_fields=(('id', parent_id),))
+
+        parent_id_2 = 'test_parent_2'
+        parent_entry_2 = self.__make_fake_entry(parent_id_2, 'parent')
+        parent_tag_2 = self.__make_fake_tag(string_fields=(('id',
+                                                            parent_id_2),))
+
+        child_id = 'test_child'
+        child_entry = self.__make_fake_entry(child_id, 'child')
+        string_fields = ('id', child_id), ('parent_id', parent_id)
+        child_tag = self.__make_fake_tag(string_fields=string_fields)
+
+        child_id_2 = 'test_child_2'
+        string_fields_2 = ('id', child_id_2), ('parent_id', 'test_parent_2')
+        child_tag_2 = self.__make_fake_tag(string_fields=string_fields_2)
+
+        parent_assembled_entry = prepare.AssembledEntryData(
+            parent_id, parent_entry, [parent_tag])
+
+        parent_assembled_entry_2 = prepare.AssembledEntryData(
+            parent_id_2, parent_entry_2, [parent_tag_2])
+
+        child_assembled_entry = prepare.AssembledEntryData(
+            child_id, child_entry, [child_tag, child_tag_2])
+
+        self.__mapper.fulfill_tag_fields([
+            parent_assembled_entry, parent_assembled_entry_2,
+            child_assembled_entry
+        ])
+
+        self.assertEqual(
+            'https://console.cloud.google.com/datacatalog/{}'.format(
+                parent_entry.name),
+            child_tag.fields['parent_entry'].string_value)
+
+        self.assertEqual(
+            'https://console.cloud.google.com/datacatalog/{}'.format(
+                parent_entry_2.name),
+            child_tag_2.fields['parent_entry'].string_value)
 
     def test_fulfill_tag_fields_should_not_resolve_invalid_mapping(self):
         child_id = 'test_child'
