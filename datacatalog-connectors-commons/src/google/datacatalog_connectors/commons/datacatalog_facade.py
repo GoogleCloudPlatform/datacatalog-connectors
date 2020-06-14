@@ -213,7 +213,8 @@ class DataCatalogFacade:
         """
         return self.__datacatalog.get_tag_template(name=name)
 
-    def get_tag_field_values_for_search_results(self, query, template, tag_field, tag_field_type):
+    def get_tag_field_values_for_search_results(self, query, template,
+                                                tag_field, tag_field_type):
         """Retrieves Data Catalog Tag field values for search results.
 
         :param query: Query used on search.
@@ -339,10 +340,11 @@ class DataCatalogFacade:
         persisted_tags = [tag for tag in persisted_tags]
 
         for persisted_tag in persisted_tags:
-            logging.info('Processing Tag from Template: %s ...', persisted_tag.template)
+            logging.info('Processing Tag from Template: %s ...',
+                         persisted_tag.template)
             tag_to_delete = None
 
-            if tag_template_name in persisted_tag.template.template:
+            if tag_template_name in persisted_tag.template:
                 tag_to_delete = persisted_tag
                 for tag in tags:
                     if tag.template == persisted_tag.template and \
@@ -351,8 +353,8 @@ class DataCatalogFacade:
                         break
 
             if tag_to_delete:
-                deleted_tag = self.delete_tag(tag_to_delete)
-                logging.info('Tag deleted: %s', deleted_tag.name)
+                self.delete_tag(tag_to_delete)
+                logging.info('Tag deleted: %s', tag_to_delete.name)
             else:
                 logging.info('Tag is up-to-date: %s', persisted_tag.name)
 

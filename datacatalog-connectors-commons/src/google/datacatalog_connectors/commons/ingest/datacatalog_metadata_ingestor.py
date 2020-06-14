@@ -33,7 +33,10 @@ class DataCatalogMetadataIngestor:
         self.__location_id = location_id
         self.__entry_group_id = entry_group_id
 
-    def ingest_metadata(self, assembled_entries_data, tag_templates_dict=None, config=None):
+    def ingest_metadata(self,
+                        assembled_entries_data,
+                        tag_templates_dict=None,
+                        config=None):
         """Ingest metadata into Data Catalog.
 
          :param
@@ -75,7 +78,10 @@ class DataCatalogMetadataIngestor:
                 logging.info('Tag Template "%s" already exists!',
                              tag_template_id)
 
-    def __ingest_entries(self, entry_group_name, assembled_entries_data, config=None):
+    def __ingest_entries(self,
+                         entry_group_name,
+                         assembled_entries_data,
+                         config=None):
         progress_indicator = 0
         assembled_entries_count = len(assembled_entries_data)
         for assembled_entry_data in assembled_entries_data:
@@ -92,6 +98,8 @@ class DataCatalogMetadataIngestor:
             if config:
                 delete_tags = config.get('delete_tags')
                 if delete_tags:
-                    self.__datacatalog_facade.delete_tags(entry,
-                                                          assembled_entry_data.tags,
-                                                          self.__entry_group_id)
+                    logging.info('')
+                    logging.info('Starting the delete tags step')
+                    self.__datacatalog_facade.delete_tags(
+                        entry, assembled_entry_data.tags,
+                        self.__entry_group_id)
