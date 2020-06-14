@@ -93,6 +93,9 @@ class DataCatalogMetadataIngestor:
             new_entry = assembled_entry_data.entry
             entry = self.__datacatalog_facade.upsert_entry(
                 entry_group_name, entry_id, new_entry)
+
+            logging.info('')
+            logging.info('Starting the upsert tags step')
             self.__datacatalog_facade.upsert_tags(entry,
                                                   assembled_entry_data.tags)
             if config:
