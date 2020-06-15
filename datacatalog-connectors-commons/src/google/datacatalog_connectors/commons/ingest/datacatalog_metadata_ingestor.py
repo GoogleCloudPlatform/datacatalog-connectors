@@ -98,11 +98,16 @@ class DataCatalogMetadataIngestor:
             logging.info('Starting the upsert tags step')
             self.__datacatalog_facade.upsert_tags(entry,
                                                   assembled_entry_data.tags)
-            if config:
-                delete_tags = config.get('delete_tags')
-                if delete_tags:
-                    logging.info('')
-                    logging.info('Starting the delete tags step')
-                    self.__datacatalog_facade.delete_tags(
-                        entry, assembled_entry_data.tags,
-                        self.__entry_group_id)
+            if config and 'delete_tags' in config:
+                delete_tags = config['delete_tags']
+                logging.info('')
+                logging.info('Starting the delete tags step')
+                # If not specified uses the entry group id to find
+                # what tag templates should have their tags deleted.
+                managed_tag_template = delete_tags.get('managed_tag_template')
+                if not managed_tag_template:
+                    managed_tag_template = self.__entry_group_id
+
+                self.__datacatalog_facade.delete_tags(
+                    entry, assembled_entry_data.tags,
+                    managed_tag_template)
