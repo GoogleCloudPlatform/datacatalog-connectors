@@ -16,12 +16,12 @@
 
 import unittest
 
-from google.datacatalog_connectors.commons_test import utils
-from google.datacatalog_connectors.commons import ingest
 import mock
-
 from google.api_core import exceptions
 from google.cloud.datacatalog import enums, types
+from google.datacatalog_connectors.commons_test import utils
+
+from google.datacatalog_connectors.commons import ingest
 
 
 class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
@@ -37,13 +37,13 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
     def setUp(self, mock_datacatalog_facade):
         self.__metadata_ingestor = ingest \
             .DataCatalogMetadataIngestor(
-                'project-id', 'location-id', 'entry_group_id')
+            'project-id', 'location-id', 'entry_group_id')
         # Shortcut for the object assigned
         # to self.__metadata_ingestor.__datacatalog_facade
         self.__datacatalog_facade = mock_datacatalog_facade.return_value
 
     def test_ingest_metadata_should_succeed(self):
-        entries = utils\
+        entries = utils \
             .Utils.create_assembled_entries_user_defined_types()
 
         datacatalog_facade = self.__datacatalog_facade
@@ -54,8 +54,21 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
         self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
 
+    def test_ingest_metadata_with_delete_tags_config_should_succeed(self):
+        entries = utils \
+            .Utils.create_assembled_entries_user_defined_types()
+
+        datacatalog_facade = self.__datacatalog_facade
+        datacatalog_facade.get_entry.return_value = None
+
+        self.__metadata_ingestor.ingest_metadata(entries, {}, {'delete_tags': True})
+
+        self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
+        self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
+        self.assertEqual(2, datacatalog_facade.delete_tags.call_count)
+
     def test_ingest_metadata_nonexistent_tag_template_should_succeed(self):
-        entries = utils\
+        entries = utils \
             .Utils.create_assembled_entries_user_defined_types()
 
         datacatalog_facade = self.__datacatalog_facade
@@ -71,7 +84,7 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_facade.create_tag_template.call_count)
 
     def test_ingest_metadata_existing_template_should_succeed(self):
-        entries = utils\
+        entries = utils \
             .Utils.create_assembled_entries_user_defined_types()
 
         datacatalog_facade = self.__datacatalog_facade
@@ -89,7 +102,7 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_facade.create_tag_template.call_count)
 
     def test_existing_entry_group_should_manually_build_entry_group_path(self):
-        entries = utils.Utils\
+        entries = utils.Utils \
             .create_assembled_entries_user_defined_types()
 
         datacatalog_facade = self.__datacatalog_facade
@@ -124,7 +137,7 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
             cls.__TIMESTAMP_TYPE
         template.fields['timestamp-field'].display_name = 'Timestamp Field'
 
-        template.fields['enum-field'].type.enum_type.allowed_values\
+        template.fields['enum-field'].type.enum_type.allowed_values \
             .add().display_name = 'Test ENUM Value'
 
         return tag_template_id, template
