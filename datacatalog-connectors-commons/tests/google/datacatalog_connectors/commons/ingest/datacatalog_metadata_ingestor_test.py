@@ -37,7 +37,7 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
     def setUp(self, mock_datacatalog_facade):
         self.__metadata_ingestor = ingest \
             .DataCatalogMetadataIngestor(
-            'project-id', 'location-id', 'entry_group_id')
+                'project-id', 'location-id', 'entry_group_id')
         # Shortcut for the object assigned
         # to self.__metadata_ingestor.__datacatalog_facade
         self.__datacatalog_facade = mock_datacatalog_facade.return_value
@@ -54,7 +54,8 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
         self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
 
-    def test_ingest_metadata_with_delete_tags_managed_template_config_should_succeed(self):
+    def test_ingest_metadata_with_delete_tags_managed_template_config_should_succeed(  # noqa:E501
+            self):
         entries = utils \
             .Utils.create_assembled_entries_user_defined_types()
 
@@ -63,9 +64,8 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
 
         expected_tag_template_arg = 'entry_group_id'
 
-        self.__metadata_ingestor.ingest_metadata(
-            entries, {},
-            {'delete_tags': {}})
+        self.__metadata_ingestor.ingest_metadata(entries, {},
+                                                 {'delete_tags': {}})
 
         self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
         self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
@@ -87,10 +87,11 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
 
         expected_tag_template_arg = 'my-template'
 
-        self.__metadata_ingestor.ingest_metadata(
-            entries, {},
-            {'delete_tags': {
-                'managed_tag_template': expected_tag_template_arg}})
+        self.__metadata_ingestor.ingest_metadata(entries, {}, {
+            'delete_tags': {
+                'managed_tag_template': expected_tag_template_arg
+            }
+        })
 
         self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
         self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)

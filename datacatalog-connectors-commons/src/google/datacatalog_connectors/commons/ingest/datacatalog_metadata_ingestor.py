@@ -109,5 +109,4 @@ class DataCatalogMetadataIngestor:
                     managed_tag_template = self.__entry_group_id
 
                 self.__datacatalog_facade.delete_tags(
-                    entry, assembled_entry_data.tags,
-                    managed_tag_template)
+                    entry, assembled_entry_data.tags, managed_tag_template)
