@@ -21,10 +21,16 @@ from google.datacatalog_connectors.commons import utils
 from google.api_core import exceptions
 from google.cloud import datacatalog
 from google.cloud.datacatalog import types
+from google.cloud.datacatalog import enums
 
 
 class DataCatalogFacade:
     """Wraps Data Catalog's API calls."""
+
+    __BOOL_TYPE = enums.FieldType.PrimitiveType.BOOL
+    __DOUBLE_TYPE = enums.FieldType.PrimitiveType.DOUBLE
+    __STRING_TYPE = enums.FieldType.PrimitiveType.STRING
+    __TIMESTAMP_TYPE = enums.FieldType.PrimitiveType.TIMESTAMP
 
     def __init__(self, project_id):
         self.__datacatalog = datacatalog.DataCatalogClient()
@@ -207,6 +213,39 @@ class DataCatalogFacade:
         """
         return self.__datacatalog.get_tag_template(name=name)
 
+    def get_tag_field_values_for_search_results(self, query, template,
+                                                tag_field, tag_field_type):
+        """Retrieves Data Catalog Tag field values for search results.
+
+        :param query: Query used on search.
+        :param template: The Tag Template name.
+        :param tag_field: The Tag Field name.
+        :param tag_field_type: The Tag Field type.
+
+        :return: List of tag field values.
+        """
+        tag_field_values = []
+        table_entries_name = \
+            self.search_catalog_relative_resource_name(query)
+        for table_entry_name in table_entries_name:
+            tags = self.list_tags(table_entry_name)
+            for tag in tags:
+                if template in tag.template:
+                    field = tag.fields[tag_field]
+
+                    if self.__STRING_TYPE == tag_field_type:
+                        tag_field_value = field.string_value
+                    elif self.__BOOL_TYPE == tag_field_type:
+                        tag_field_value = field.bool_value
+                    elif self.__DOUBLE_TYPE == tag_field_type:
+                        tag_field_value = field.double_value
+                    elif self.__TIMESTAMP_TYPE == tag_field_type:
+                        tag_field_value = field.timestamp_value
+                    else:
+                        tag_field_value = field.enum_value.display_name
+                    tag_field_values.append(tag_field_value)
+        return tag_field_values
+
     def delete_tag_template(self, name):
         """Deletes a Data Catalog Tag Template.
 
@@ -223,6 +262,14 @@ class DataCatalogFacade:
         :return: The created Tag.
         """
         return self.__datacatalog.create_tag(parent=entry_name, tag=tag)
+
+    def delete_tag(self, tag):
+        """Deletes a Data Catalog Tag.
+
+        :param tag: A Tag object.
+        :return: The deleted Tag.
+        """
+        return self.__datacatalog.delete_tag(tag.name)
 
     def list_tags(self, entry_name):
         """List Tags for a given Entry.
@@ -277,6 +324,39 @@ class DataCatalogFacade:
                 logging.info('Tag updated: %s', tag_to_update.name)
             else:
                 logging.info('Tag is up-to-date: %s', tag.name)
+
+    def delete_tags(self, entry, tags, tag_template_name):
+        """Deletes Tags for a given Entry if they don't exist
+        in Data Catalog.
+
+        :param entry: The Entry object.
+        :param tags: A list of Tag objects.
+        :param tag_template_name: Template name used to filter
+        templates out, it can be a part of the template name.
+        """
+        persisted_tags = self.list_tags(entry.name)
+
+        # Fetch GRPCIterator.
+        persisted_tags = [tag for tag in persisted_tags]
+
+        for persisted_tag in persisted_tags:
+            logging.info('Processing Tag from Template: %s ...',
+                         persisted_tag.template)
+            tag_to_delete = None
+
+            if tag_template_name in persisted_tag.template:
+                tag_to_delete = persisted_tag
+                for tag in tags:
+                    if tag.template == persisted_tag.template and \
+                       tag.column == persisted_tag.column:
+                        tag_to_delete = None
+                        break
+
+            if tag_to_delete:
+                self.delete_tag(tag_to_delete)
+                logging.info('Tag deleted: %s', tag_to_delete.name)
+            else:
+                logging.info('Tag is up-to-date: %s', persisted_tag.name)
 
     @classmethod
     def __tags_fields_are_equal(cls, tag_1, tag_2):

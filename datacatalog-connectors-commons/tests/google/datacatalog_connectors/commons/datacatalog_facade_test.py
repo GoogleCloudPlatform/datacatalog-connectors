@@ -16,12 +16,13 @@
 
 import unittest
 
-from google.datacatalog_connectors.commons_test import utils
-from google.datacatalog_connectors import commons
 import mock
-
 from google.api_core import exceptions
+from google.cloud.datacatalog import enums
 from google.cloud.datacatalog import types
+from google.datacatalog_connectors.commons_test import utils
+
+from google.datacatalog_connectors import commons
 
 
 class DataCatalogFacadeTestCase(unittest.TestCase):
@@ -29,10 +30,17 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
     __SEARCH_CATALOG_METHOD = '{}.DataCatalogFacade.search_catalog'.format(
         __COMMONS_PACKAGE)
 
+    __BOOL_TYPE = enums.FieldType.PrimitiveType.BOOL
+    __DOUBLE_TYPE = enums.FieldType.PrimitiveType.DOUBLE
+    __STRING_TYPE = enums.FieldType.PrimitiveType.STRING
+    __TIMESTAMP_TYPE = enums.FieldType.PrimitiveType.TIMESTAMP
+    __NON_PRIMITIVE_TYPE = enums.FieldType.PrimitiveType.\
+        PRIMITIVE_TYPE_UNSPECIFIED
+
     @mock.patch('{}.datacatalog_facade.datacatalog.DataCatalogClient'.format(
         __COMMONS_PACKAGE))
     def setUp(self, mock_datacatalog_client):
-        self.__datacatalog_facade = commons\
+        self.__datacatalog_facade = commons \
             .DataCatalogFacade('test-project')
         # Shortcut for the object assigned
         # to self.__datacatalog_facade.__datacatalog
@@ -205,6 +213,12 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog = self.__datacatalog_client
         self.assertEqual(1, datacatalog.create_tag.call_count)
 
+    def test_delete_tag_should_succeed(self):
+        self.__datacatalog_facade.delete_tag(self.__create_tag())
+
+        datacatalog = self.__datacatalog_client
+        self.assertEqual(1, datacatalog.delete_tag.call_count)
+
     def test_list_tags_should_succeed(self):
         self.__datacatalog_facade.list_tags('entry_name')
 
@@ -268,6 +282,74 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         except exceptions.GoogleAPICallError as e:
             super(DataCatalogFacadeTestCase, self).fail(e)
 
+    def test_delete_tags_nonexistent_should_succeed(self):
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = []
+
+        entry = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource', 11, 22)
+        self.__datacatalog_facade.delete_tags(entry, [self.__create_tag()],
+                                              'template')
+
+        datacatalog.delete_tag.assert_not_called()
+
+    def test_delete_tags_nonexistent_template_should_succeed(self):
+        entry = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource', 11, 22)
+
+        tag = self.__create_tag()
+
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = [tag]
+
+        self.__datacatalog_facade.delete_tags(entry, [tag],
+                                              'nonexistent-template')
+
+        datacatalog.delete_tag.assert_not_called()
+
+    def test_delete_tags_unchanged_should_succeed(self):
+        entry = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource', 11, 22)
+
+        tag = self.__create_tag()
+
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = [tag]
+
+        self.__datacatalog_facade.delete_tags(entry, [tag], 'template')
+
+        datacatalog.delete_tag.assert_not_called()
+
+    def test_delete_tags_deleted_should_succeed(self):
+        entry = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource', 11, 22)
+
+        deleted_tag = self.__create_tag()
+
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = [deleted_tag]
+
+        new_tag = self.__create_tag()
+        new_tag.template = 'new_template_2'
+
+        self.__datacatalog_facade.delete_tags(entry, [new_tag], 'template')
+
+        self.assertEqual(1, datacatalog.delete_tag.call_count)
+
+    def test_delete_tags_should_handle_empty_list(self):
+        entry = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource', 11, 22)
+
+        try:
+            self.__datacatalog_facade.delete_tags(entry, [], 'template')
+        except exceptions.GoogleAPICallError as e:
+            super(DataCatalogFacadeTestCase, self).fail(e)
+
     def test_search_results_should_return_values(self):
         expected_return_value = [
             self.__create_search_result('localhost//asset_1'),
@@ -295,12 +377,149 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
 
         mock_search_catalog.return_value = search_return_values
 
-        resource_names = self.__datacatalog_facade\
+        resource_names = self.__datacatalog_facade \
             .search_catalog_relative_resource_name(
                 'system=bigquery')
 
         self.assertEqual(1, mock_search_catalog.call_count)
         self.assertEqual(expected_resource_names, resource_names)
+
+    @mock.patch(__SEARCH_CATALOG_METHOD)
+    def test_get_tag_field_values_for_search_results_string_field_should_return_values(  # noqa: E501
+            self, mock_search_catalog):  # noqa: E125
+
+        expected_resource_names = ['localhost//asset_1', 'localhost//asset_2']
+
+        search_return_values = [
+            self.__create_search_result(resource_name)
+            for resource_name in expected_resource_names
+        ]
+
+        mock_search_catalog.return_value = search_return_values
+
+        tag = self.__create_tag()
+
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = [tag]
+
+        string_value = self.__datacatalog_facade \
+            .get_tag_field_values_for_search_results(
+                'system=bigquery', 'template', 'string-field',
+                self.__STRING_TYPE)
+
+        self.assertEqual(1, mock_search_catalog.call_count)
+        self.assertEqual(2, datacatalog.list_tags.call_count)
+        self.assertEqual(string_value,
+                         ['Test String Value', 'Test String Value'])
+
+    @mock.patch(__SEARCH_CATALOG_METHOD)
+    def test_get_tag_field_values_for_search_results_double_field_should_return_values(  # noqa: E501
+            self, mock_search_catalog):  # noqa: E125
+
+        expected_resource_names = ['localhost//asset_1', 'localhost//asset_2']
+
+        search_return_values = [
+            self.__create_search_result(resource_name)
+            for resource_name in expected_resource_names
+        ]
+
+        mock_search_catalog.return_value = search_return_values
+
+        tag = self.__create_tag()
+
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = [tag]
+
+        double_value = self.__datacatalog_facade \
+            .get_tag_field_values_for_search_results(
+                'system=bigquery', 'template', 'double-field',
+                self.__DOUBLE_TYPE)
+
+        self.assertEqual(1, mock_search_catalog.call_count)
+        self.assertEqual(2, datacatalog.list_tags.call_count)
+        self.assertEqual(double_value, [1.0, 1.0])
+
+    @mock.patch(__SEARCH_CATALOG_METHOD)
+    def test_get_tag_field_values_for_search_results_bool_field_should_return_values(  # noqa: E501
+            self, mock_search_catalog):  # noqa: E125
+
+        expected_resource_names = ['localhost//asset_1', 'localhost//asset_2']
+
+        search_return_values = [
+            self.__create_search_result(resource_name)
+            for resource_name in expected_resource_names
+        ]
+
+        mock_search_catalog.return_value = search_return_values
+
+        tag = self.__create_tag()
+
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = [tag]
+
+        bool_value = self.__datacatalog_facade \
+            .get_tag_field_values_for_search_results(
+                'system=bigquery', 'template', 'bool-field',
+                self.__BOOL_TYPE)
+
+        self.assertEqual(1, mock_search_catalog.call_count)
+        self.assertEqual(2, datacatalog.list_tags.call_count)
+        self.assertEqual(bool_value, [True, True])
+
+    @mock.patch(__SEARCH_CATALOG_METHOD)
+    def test_get_tag_field_values_for_search_results_timestamp_field_should_return_values(  # noqa: E501
+            self, mock_search_catalog):  # noqa: E125
+
+        expected_resource_names = ['localhost//asset_1', 'localhost//asset_2']
+
+        search_return_values = [
+            self.__create_search_result(resource_name)
+            for resource_name in expected_resource_names
+        ]
+
+        mock_search_catalog.return_value = search_return_values
+
+        tag = self.__create_tag()
+
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = [tag]
+
+        timestamp_value = self.__datacatalog_facade \
+            .get_tag_field_values_for_search_results(
+                'system=bigquery', 'template', 'timestamp-field',
+                self.__TIMESTAMP_TYPE)
+
+        self.assertEqual(1, mock_search_catalog.call_count)
+        self.assertEqual(2, datacatalog.list_tags.call_count)
+        self.assertEqual(timestamp_value[0].seconds, 1567778400)
+        self.assertEqual(timestamp_value[1].seconds, 1567778400)
+
+    @mock.patch(__SEARCH_CATALOG_METHOD)
+    def test_get_tag_field_values_for_search_results_enum_field_should_return_values(  # noqa: E501
+            self, mock_search_catalog):  # noqa: E125
+
+        expected_resource_names = ['localhost//asset_1', 'localhost//asset_2']
+
+        search_return_values = [
+            self.__create_search_result(resource_name)
+            for resource_name in expected_resource_names
+        ]
+
+        mock_search_catalog.return_value = search_return_values
+
+        tag = self.__create_tag()
+
+        datacatalog = self.__datacatalog_client
+        datacatalog.list_tags.return_value = [tag]
+
+        bool_value = self.__datacatalog_facade \
+            .get_tag_field_values_for_search_results(
+                'system=bigquery', 'template', 'enum-field',
+                self.__NON_PRIMITIVE_TYPE)
+
+        self.assertEqual(1, mock_search_catalog.call_count)
+        self.assertEqual(2, datacatalog.list_tags.call_count)
+        self.assertEqual(bool_value, ['Test ENUM Value', 'Test ENUM Value'])
 
     @classmethod
     def __create_tag(cls):
