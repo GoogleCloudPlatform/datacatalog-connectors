@@ -37,7 +37,7 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
     def setUp(self, mock_datacatalog_facade):
         self.__metadata_ingestor = ingest \
             .DataCatalogMetadataIngestor(
-            'project-id', 'location-id', 'entry_group_id')
+                'project-id', 'location-id', 'entry_group_id')
         # Shortcut for the object assigned
         # to self.__metadata_ingestor.__datacatalog_facade
         self.__datacatalog_facade = mock_datacatalog_facade.return_value
@@ -61,7 +61,8 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
         datacatalog_facade = self.__datacatalog_facade
         datacatalog_facade.get_entry.return_value = None
 
-        self.__metadata_ingestor.ingest_metadata(entries, {}, {'delete_tags': True})
+        self.__metadata_ingestor.ingest_metadata(entries, {},
+                                                 {'delete_tags': True})
 
         self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
         self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
