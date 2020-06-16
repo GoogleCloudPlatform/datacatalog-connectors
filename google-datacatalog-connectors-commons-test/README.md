@@ -37,7 +37,7 @@ Common test resources for Data Catalog connectors
 ### 1.1. Get the code
 
 ````bash
-git clone https://.../ddatacatalog-connectors.git
+git clone https://github.com/GoogleCloudPlatform/datacatalog-connectors
 cd google-datacatalog-connectors-commons-test
 ````
 
