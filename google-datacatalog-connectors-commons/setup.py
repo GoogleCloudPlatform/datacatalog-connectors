@@ -16,23 +16,27 @@
 
 import setuptools
 
-release_status = 'Development Status :: 3 - Alpha'
+version = "0.5.0"
+release_status = 'Development Status :: 4 - Beta'
+
+with open('README.md') as readme_file:
+    readme = readme_file.read()
 
 setuptools.setup(
-    name='datacatalog-connectors-commons-test',
-    version='1.0.0',
+    name='google-datacatalog-connectors-commons',
+    version=version,
     author='Google LLC',
-    description='Common test resources for Data Catalog connectors',
+    description='Common resources for Data Catalog connectors',
     packages=setuptools.find_packages(where='./src'),
     namespace_packages=['google', 'google.datacatalog_connectors'],
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=(
-        'pandas==0.24.2',
+        'google-cloud-monitoring',
+        'python-dateutil',
         'google-cloud-datacatalog'
     ),
-    setup_requires=('pytest-runner', 'mock==3.0.5', 'pytest'),
-    tests_require=('pytest-cov',),
+    tests_require=('pytest-runner', 'mock==3.0.5', 'pytest', 'pytest-cov', 'google-datacatalog-connectors-commons-test'),
     classifiers=[
         release_status,
         'Intended Audience :: Developers',
@@ -47,5 +51,7 @@ setuptools.setup(
         'Operating System :: OS Independent',
         'Topic :: Internet',
     ],
+    long_description=readme,
+    long_description_content_type='text/markdown',
     platforms='Posix; MacOS X; Windows',
 )
