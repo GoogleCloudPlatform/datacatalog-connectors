@@ -33,7 +33,8 @@ setuptools.setup(
     include_package_data=True,
     install_requires=('google-cloud-monitoring', 'python-dateutil',
                       'google-cloud-datacatalog'),
-    tests_require=('pytest-runner', 'mock==3.0.5', 'pytest', 'pytest-cov',
+    setup_requires=('pytest-runner',),
+    tests_require=('mock==3.0.5', 'pytest', 'pytest-cov',
                    'google-datacatalog-connectors-commons-test'),
     classifiers=[
         release_status,

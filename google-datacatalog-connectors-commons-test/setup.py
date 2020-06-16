@@ -31,10 +31,9 @@ setuptools.setup(
     namespace_packages=['google', 'google.datacatalog_connectors'],
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=('pandas==0.24.2', 'google-cloud-datacatalog'
-                      'google-datacatalog-connectors-commons'),
+    install_requires=('pandas==0.24.2', 'google-cloud-datacatalog'),
+    setup_requires=('pytest-runner',),                  
     tests_require=(
-        'pytest-runner',
         'mock==3.0.5',
         'pytest',
         'pytest-cov',
