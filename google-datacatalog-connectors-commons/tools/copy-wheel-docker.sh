@@ -21,5 +21,5 @@ VERSION=$(sed -n 's/^ *version=['\'']//p' setup.py | sed -n 's/['\'',]*$//p')
 docker build --rm --tag datacatalog-connectors-commons .
 docker create --name dc-commons-wheel datacatalog-connectors-commons
 mkdir -p dist
-docker cp dc-commons-wheel:/app/dist/datacatalog_connectors_commons-"$VERSION"-py2.py3-none-any.whl ./dist
+docker cp dc-commons-wheel:/app/dist/google_datacatalog_connectors_commons-"$VERSION"-py2.py3-none-any.whl ./dist
 docker rm -fv dc-commons-wheel

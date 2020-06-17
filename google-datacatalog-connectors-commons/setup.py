@@ -16,15 +16,14 @@
 
 import setuptools
 
-version = "0.5.0"
-release_status = 'Development Status :: 4 - Beta'
+release_status='Development Status :: 4 - Beta'
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
 setuptools.setup(
     name='google-datacatalog-connectors-commons',
-    version=version,
+    version='0.5.0',
     author='Google LLC',
     description='Common resources for Data Catalog connectors',
     packages=setuptools.find_packages(where='./src'),
