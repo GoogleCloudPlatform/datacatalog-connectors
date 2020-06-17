@@ -7,7 +7,7 @@ This repository contains commons code used by the Data Catalog connectors. Also 
 ![Python package](https://github.com/GoogleCloudPlatform/datacatalog-connectors/workflows/Python%20package/badge.svg?branch=master)
 
 **Note:**
-The package names were renamed, if you are still using the older version use the branch: [release-v0.0.0](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/release-v0.0.0)
+The package names were renamed, if you are still using the older version use: [release-v0.0.0](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/release-v0.0.0)
 
 ## Project structure
 
