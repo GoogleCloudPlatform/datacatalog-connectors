@@ -18,9 +18,8 @@ Common resources for Data Catalog connectors.
 - [1. Installable file build process](#1-installable-file-build-process)
   * [1.1. Get the code](#11-get-the-code)
   * [1.2. Virtualenv](#12-virtualenv)
-      - [1.2.1. Install Python 3.5](#121-install-python-35)
+      - [1.2.1. Install Python 3.6](#121-install-python-36)
       - [1.2.2. Create and activate a *virtualenv*](#122-create-and-activate-a-virtualenv)
-  * [1.3. Generate a *wheel* file](#13-generate-a-wheel-file)
 - [2. Developer environment](#2-developer-environment)
   * [2.1. Install and run YAPF formatter](#21-install-and-run-yapf-formatter)
   * [2.2. Install and run Flake8 linter](#22-install-and-run-flake8-linter)
@@ -37,31 +36,22 @@ Common resources for Data Catalog connectors.
 
 ````bash
 git clone https://github.com/GoogleCloudPlatform/datacatalog-connectors
-cd google-datacatalog-connectors-commons
+cd datacatalog-connectors/google-datacatalog-connectors-commons
 ````
 
 ### 1.2. Virtualenv
 
 Using *virtualenv* is optional, but strongly recommended.
 
-##### 1.2.1. Install Python 3.5
+##### 1.2.1. Install Python 3.6
 
 ##### 1.2.2. Create and activate a *virtualenv*
 
 ```bash
-pip install --upgrade virtualenv
-python3 -m virtualenv --python python3 env
+pip3 install --upgrade virtualenv
+python3 -m virtualenv --python python3.6 env
 source ./env/bin/activate
 ```
-
-### 1.3. Generate a *wheel* file
-
-```bash
-python setup.py bdist_wheel
-```
-
-> The wheel file can used to install the package as a local pip dependency to
-> other projects while it's not published to The Python Package Index (PyPI).
 
 ## 2. Developer environment
 
