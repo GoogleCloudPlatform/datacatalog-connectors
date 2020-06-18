@@ -18,8 +18,8 @@ The following components are available in this repo:
 
 | Component | Description | Folder | Language | 
 |-----------|-------------|--------|----------|
-| google-datacatalog-connectors-commons | Commons code shared by all connectors. | [./google-datacatalog-connectors-commons](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/master/google-datacatalog-connectors-commons) | Python |
-| google-datacatalog-connectors-commons-test | Commons test code shared by all connectors. | [./google-datacatalog-connectors-commons-test](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/master/google-datacatalog-connectors-commons-test) | Python |
+| google-datacatalog-connectors-commons | Commons code shared by all connectors. | [google-datacatalog-connectors-commons](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/master/google-datacatalog-connectors-commons) | Python |
+| google-datacatalog-connectors-commons-test | Commons test code shared by all connectors. | [google-datacatalog-connectors-commons-test](https://github.com/GoogleCloudPlatform/datacatalog-connectors/tree/master/google-datacatalog-connectors-commons-test) | Python |
 
 The following sample codes are available:
 
