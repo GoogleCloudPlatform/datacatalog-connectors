@@ -97,6 +97,6 @@ python setup.py test
 [1]: https://github.com/GoogleCloudPlatform/datacatalog-connectors/workflows/Python%20package/badge.svg?branch=master
 [2]: https://img.shields.io/pypi/v/google-datacatalog-connectors-commons-test.svg
 [3]: https://pypi.org/project/google-datacatalog-connectors-commons-test/
-[3]: https://img.shields.io/github/license/GoogleCloudPlatform/datacatalog-connectors.svg
+[4]: https://img.shields.io/github/license/GoogleCloudPlatform/datacatalog-connectors.svg
 [5]: https://img.shields.io/github/issues/GoogleCloudPlatform/datacatalog-connectors.svg
 [6]: https://github.com/GoogleCloudPlatform/datacatalog-connectors/issues
