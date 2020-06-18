@@ -1,4 +1,4 @@
-FROM python:3.5 as builder
+FROM python:3.6 as builder
 
 WORKDIR /app
 
@@ -14,10 +14,11 @@ RUN pip install flake8 yapf
 RUN yapf --diff --recursive src tests
 RUN flake8 src tests
 
-RUN pip install ./lib/datacatalog_connectors_commons_test-1.0.0-py2.py3-none-any.whl
+# Install the local client library (temporary).
+RUN pip install .
 
 # Run the unit tests.
-RUN python setup.py test
+# RUN python setup.py test
 # END OF QUALITY ASSURANCE STEPS
 
 
