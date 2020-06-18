@@ -2,7 +2,7 @@
 
 Common test resources for Data Catalog connectors
 
-![Python package](1)[![PyPi][2]][3] [![License][4]][4] [![Issues][5]][6]
+[![Python package][1]][1] [![PyPi][2]][3] [![License][4]][4] [![Issues][5]][6]
 
 **Disclaimer: This is not an officially supported Google product.**
 
