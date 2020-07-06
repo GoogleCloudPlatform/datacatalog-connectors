@@ -38,3 +38,5 @@ The following sample codes are available:
 | google-datacatalog-looker-connector |  Sample code for Looker data source. | [google-datacatalog-looker-connector](https://github.com/GoogleCloudPlatform/datacatalog-connectors-bi/tree/master/google-datacatalog-looker-connector) | Python |
 | google-datacatalog-tableau-connector | Sample code for Tableau data source. | [google-datacatalog-tableau-connector](https://github.com/GoogleCloudPlatform/datacatalog-connectors-bi/tree/master/google-datacatalog-tableau-connector) | Python | 
 | google-datacatalog-hive-connector | Sample code for Hive data source. | [google-datacatalog-hive-connector](https://github.com/GoogleCloudPlatform/datacatalog-connectors-hive/tree/master/google-datacatalog-hive-connector) | Python |
+| google-datacatalog-apache-atlas-connector | Sample code for Apache Atlas data source. | [google-datacatalog-apache-atlas-connector](https://github.com/GoogleCloudPlatform/datacatalog-connectors-hive/tree/master/google-datacatalog-apache-atlas-connector) | Python |
+
