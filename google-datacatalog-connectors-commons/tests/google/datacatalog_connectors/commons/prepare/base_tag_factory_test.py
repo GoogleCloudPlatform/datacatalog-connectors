@@ -21,7 +21,7 @@ import unittest
 from google.datacatalog_connectors.commons import prepare
 import dateutil.parser
 
-from google.cloud.datacatalog import types
+from google.cloud import datacatalog
 
 
 class BaseTagFactoryTestCase(unittest.TestCase):
@@ -30,37 +30,37 @@ class BaseTagFactoryTestCase(unittest.TestCase):
         self.__base_tag_factory = prepare.BaseTagFactory()
 
     def test_set_bool_field_should_skip_none_value(self):
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_bool_field(tag, 'bool', None)
 
         self.assertNotIn('bool', tag.fields)
 
     def test_set_bool_field_should_set_given_value(self):
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_bool_field(tag, 'bool', False)
 
         self.assertFalse(tag.fields['bool'].bool_value)
 
     def test_set_double_field_should_skip_none_value(self):
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_double_field(tag, 'double', None)
 
         self.assertNotIn('double', tag.fields)
 
     def test_set_double_field_should_set_given_value(self):
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_double_field(tag, 'double', 2.5)
 
         self.assertEqual(2.5, tag.fields['double'].double_value)
 
     def test_set_string_field_should_skip_none_value(self):
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_string_field(tag, 'string', None)
 
         self.assertNotIn('string', tag.fields)
 
     def test_set_string_field_should_skip_empty_value(self):
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_string_field(tag, 'string', '')
 
         self.assertNotIn('string', tag.fields)
@@ -72,7 +72,7 @@ class BaseTagFactoryTestCase(unittest.TestCase):
          1 byte when encoded in UTF-8.
         """
 
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_string_field(tag, 'string', 'a' * 2001)
 
         self.assertEqual(2000, len(tag.fields['string'].string_value))
@@ -88,7 +88,7 @@ class BaseTagFactoryTestCase(unittest.TestCase):
          needs 2 bytes and periods need 1 byte when encoded in UTF-8.
         """
 
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         str_value = u''
         for _ in range(1010):
             str_value += u'ã'
@@ -114,7 +114,7 @@ class BaseTagFactoryTestCase(unittest.TestCase):
          encoded in UTF-8.
         """
 
-        tag = types.Tag()
+        tag = datacatalog.Tag()
 
         str_value = u''
         for _ in range(10):
@@ -134,18 +134,19 @@ class BaseTagFactoryTestCase(unittest.TestCase):
             1999, len(tag.fields['string'].string_value.encode('UTF-8')))
 
     def test_set_timestamp_field_should_skip_none_value(self):
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_timestamp_field(tag, 'timestamp-field',
                                                      None)
 
         self.assertNotIn('timestamp-field', tag.fields)
 
     def test_set_timestamp_field_should_set_given_value(self):
-        tag = types.Tag()
+        tag = datacatalog.Tag()
         self.__base_tag_factory._set_timestamp_field(
             tag, 'timestamp-field',
             dateutil.parser.isoparse('2019-09-12T16:30:00+0000'))
 
         date = dateutil.parser.isoparse('2019-09-12T16:30:00+0000')
-        self.assertEqual(int(calendar.timegm(date.utctimetuple())),
-                         tag.fields['timestamp-field'].timestamp_value.seconds)
+        self.assertEqual(
+            int(calendar.timegm(date.utctimetuple())),
+            tag.fields['timestamp-field'].timestamp_value.timestamp())
