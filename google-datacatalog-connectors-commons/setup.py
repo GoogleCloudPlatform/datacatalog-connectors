@@ -30,7 +30,7 @@ setuptools.setup(
     namespace_packages=['google', 'google.datacatalog_connectors'],
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=('google-cloud-monitoring', 'python-dateutil',
+    install_requires=('google-cloud-monitoring>=1,<2', 'python-dateutil',
                       'google-cloud-datacatalog>=1,<2'),
     setup_requires=('pytest-runner',),
     tests_require=('mock==3.0.5', 'pytest', 'pytest-cov',
