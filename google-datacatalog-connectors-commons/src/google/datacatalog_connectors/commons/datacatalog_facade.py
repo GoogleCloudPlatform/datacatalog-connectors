@@ -109,10 +109,15 @@ class DataCatalogFacade:
     def __entry_was_updated(cls, current_entry, new_entry):
         # Update time comparison allows to verify whether the entry was
         # updated on the source system.
-        current_update_time = \
-            current_entry.source_system_timestamps.update_time.timestamp()
-        new_update_time = \
-            new_entry.source_system_timestamps.update_time.timestamp()
+        current_update_time = 0
+        if current_entry.source_system_timestamps.update_time:
+            current_update_time = \
+                current_entry.source_system_timestamps.update_time.timestamp()
+
+        new_update_time = 0
+        if new_entry.source_system_timestamps.update_time:        
+            new_update_time = \
+                new_entry.source_system_timestamps.update_time.timestamp()
 
         updated_time_changed = \
             new_update_time != 0 and current_update_time != new_update_time
