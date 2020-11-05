@@ -4,14 +4,13 @@ CURRENT_DIR=$(pwd)
 SETUP_FILENAME="setup.py"
 CONNECTOR_NAME_REGEXP="^google-datacatalog-connectors-([a-zA-Z-]+)$"
 
-release-create-tags::main(){
+create-current-version-tags::main(){
 
     if [[ -z "${GITHUB_TOKEN}" ]]; then
-        echo "Undefined GITHUB_TOKEN variable"
-        release-create-tags::usage
+        create-current-version-tags::usage
     fi
 
-    echo "START release tagging script"
+    echo "START current version tagging script"
     echo ""
 
     for connector_dir in `ls ${CURRENT_DIR} | grep connector`; do
@@ -19,14 +18,14 @@ release-create-tags::main(){
 
         setup_path=${CURRENT_DIR}/${connector_dir}/${SETUP_FILENAME}
 
-        release_version=$(sed -n "s/^ *version=['\'']//p" ${setup_path} | sed -n "s/['\'',]*$//p")
+        current_version=$(sed -n "s/^ *version=['\'']//p" ${setup_path} | sed -n "s/['\'',]*$//p")
 
         [[ ${connector_dir} =~ ${CONNECTOR_NAME_REGEXP} ]]
         connector_simple_name="${BASH_REMATCH[1]}"
 
-        echo " tagging ${connector_simple_name} with release version: ${release_version}"
+        echo " tagging ${connector_simple_name} with current version: ${current_version}"
 
-        tag_name="${connector_simple_name}-${release_version}"
+        tag_name="${connector_simple_name}-${current_version}"
 
         git tag ${tag_name}
 
@@ -44,12 +43,12 @@ release-create-tags::main(){
         echo ""
     done
 
-    echo 'END release tagging script'
+    echo 'END current version tagging script'
 }
 
-release-create-tags::usage(){
-  echo 'SET: "GITHUB_TOKEN" environment variable'
+create-current-version-tags::usage(){
+  echo 'Please set the "GITHUB_TOKEN" environment variable before running this script'
   exit 2
 }
 
-release-create-tags::main "$@"
+create-current-version-tags::main "$@"
