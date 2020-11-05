@@ -34,7 +34,7 @@ class BaseTagFactory:
 
     @classmethod
     def _set_double_field(cls, tag, field_id, value):
-        if value:
+        if value is not None:
             double_field = datacatalog.TagField()
             double_field.double_value = value
             tag.fields[field_id] = double_field
