@@ -23,16 +23,17 @@ with open('README.md') as readme_file:
 
 setuptools.setup(
     name='google-datacatalog-connectors-commons-test',
-    version='0.5.0',
+    version='0.5.1',
     author='Google LLC',
     description='Common test resources for Data Catalog connectors',
     packages=setuptools.find_packages(where='./src'),
     namespace_packages=['google', 'google.datacatalog_connectors'],
     package_dir={'': 'src'},
     include_package_data=True,
-    install_requires=('pandas==0.24.2',
+    install_requires=('pandas>=1.1.4,<1.2.0',
                       'google-datacatalog-connectors-commons'),
     setup_requires=('pytest-runner',),
+
     tests_require=(
         'mock==3.0.5',
         'pytest',
