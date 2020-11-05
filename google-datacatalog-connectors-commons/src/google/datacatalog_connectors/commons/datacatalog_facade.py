@@ -115,7 +115,7 @@ class DataCatalogFacade:
                 current_entry.source_system_timestamps.update_time.timestamp()
 
         new_update_time = 0
-        if new_entry.source_system_timestamps.update_time:        
+        if new_entry.source_system_timestamps.update_time:
             new_update_time = \
                 new_entry.source_system_timestamps.update_time.timestamp()
 
