@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from google.cloud import datacatalog
+from google.protobuf import timestamp_pb2
 import six
 
 
@@ -26,12 +28,16 @@ class BaseTagFactory:
     @classmethod
     def _set_bool_field(cls, tag, field_id, value):
         if value is not None:
-            tag.fields[field_id].bool_value = value
+            bool_field = datacatalog.TagField()
+            bool_field.bool_value = value
+            tag.fields[field_id] = bool_field
 
     @classmethod
     def _set_double_field(cls, tag, field_id, value):
         if value:
-            tag.fields[field_id].double_value = value
+            double_field = datacatalog.TagField()
+            double_field.double_value = value
+            tag.fields[field_id] = double_field
 
     @classmethod
     def _set_string_field(cls, tag, field_id, value):
@@ -77,9 +83,16 @@ class BaseTagFactory:
                 'ignore')) if len(encoded) > max_length else encoded.decode(
                     encoding, 'ignore')
 
-        tag.fields[field_id].string_value = decoded
+        string_field = datacatalog.TagField()
+        string_field.string_value = decoded
+        tag.fields[field_id] = string_field
 
     @classmethod
     def _set_timestamp_field(cls, tag, field_id, value):
         if value:
-            tag.fields[field_id].timestamp_value.FromDatetime(value)
+            timestamp = timestamp_pb2.Timestamp()
+            timestamp.FromDatetime(value)
+
+            timestamp_field = datacatalog.TagField()
+            timestamp_field.timestamp_value = timestamp
+            tag.fields[field_id] = timestamp_field

@@ -10,11 +10,12 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+
+  build-commons:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build-dir: ['./google-datacatalog-connectors-commons', './google-datacatalog-connectors-commons-test']
+        build-dir: ['./google-datacatalog-connectors-commons']
         python-version: [3.6, 3.7, 3.8]
     defaults:
       run:
@@ -33,6 +34,40 @@ jobs:
         pip install .
         # Update the commons test library with the local version
         pip install --upgrade ../google-datacatalog-connectors-commons-test
+    - name: Formatting rules with yapf
+      run: |
+        # stop the build if formatting is different from yapf
+        yapf --diff --recursive src tests  
+    - name: Lint with flake8
+      run: |
+        flake8 src tests
+    - name: Test with pytest
+      run: |
+        python setup.py test
+
+  build-commons-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build-dir: ['./google-datacatalog-connectors-commons-test']
+        python-version: [3.6, 3.7, 3.8]
+    defaults:
+      run:
+        working-directory: ${{ matrix.build-dir }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 yapf
+        pip install .
+        # Update the connector commons library with the local version
+        pip install --upgrade ../google-datacatalog-connectors-commons
     - name: Formatting rules with yapf
       run: |
         # stop the build if formatting is different from yapf
