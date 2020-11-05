@@ -53,6 +53,12 @@ class BaseTagFactoryTestCase(unittest.TestCase):
 
         self.assertEqual(2.5, tag.fields['double'].double_value)
 
+    def test_set_double_zero_field_should_set_given_value(self):
+        tag = datacatalog.Tag()
+        self.__base_tag_factory._set_double_field(tag, 'double', 0)
+
+        self.assertEqual(0, tag.fields['double'].double_value)        
+
     def test_set_string_field_should_skip_none_value(self):
         tag = datacatalog.Tag()
         self.__base_tag_factory._set_string_field(tag, 'string', None)
