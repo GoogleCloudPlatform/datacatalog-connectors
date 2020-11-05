@@ -16,6 +16,8 @@
 
 import abc
 
+from google.cloud import datacatalog
+
 ABC = abc.ABCMeta('ABC', (object,), {})  # compatible with Python 2 *and* 3
 
 
@@ -85,9 +87,10 @@ class BaseEntryRelationshipMapper(ABC):
                                                    related_asset_id)
                 if related_asset_key in id_name_pairs:
                     relationship_tag = relationship_tag_dict[related_asset_id]
-                    relationship_tag.fields[target_field_id].string_value = \
-                        cls.__format_related_entry_url(
-                            id_name_pairs[related_asset_key])
+                    string_field = datacatalog.TagField()
+                    string_field.string_value = cls.__format_related_entry_url(
+                        id_name_pairs[related_asset_key])
+                    relationship_tag.fields[target_field_id] = string_field
 
     @classmethod
     def __format_related_entry_url(cls, entry_name):

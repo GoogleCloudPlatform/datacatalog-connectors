@@ -18,17 +18,17 @@ import unittest
 
 import mock
 from google.api_core import exceptions
-from google.cloud.datacatalog import enums, types
+from google.cloud import datacatalog
 from google.datacatalog_connectors.commons_test import utils
 
 from google.datacatalog_connectors.commons import ingest
 
 
 class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
-    __BOOL_TYPE = enums.FieldType.PrimitiveType.BOOL
-    __DOUBLE_TYPE = enums.FieldType.PrimitiveType.DOUBLE
-    __STRING_TYPE = enums.FieldType.PrimitiveType.STRING
-    __TIMESTAMP_TYPE = enums.FieldType.PrimitiveType.TIMESTAMP
+    __BOOL_TYPE = datacatalog.FieldType.PrimitiveType.BOOL
+    __DOUBLE_TYPE = datacatalog.FieldType.PrimitiveType.DOUBLE
+    __STRING_TYPE = datacatalog.FieldType.PrimitiveType.STRING
+    __TIMESTAMP_TYPE = datacatalog.FieldType.PrimitiveType.TIMESTAMP
 
     __COMMONS_PACKAGE = 'google.datacatalog_connectors.commons'
 
@@ -153,7 +153,7 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
 
     @classmethod
     def __create_tag_template(cls):
-        template = types.TagTemplate()
+        template = datacatalog.TagTemplate()
 
         tag_template_id = 'template'
 
@@ -161,20 +161,26 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
 
         template.display_name = 'template display name'
 
-        template.fields['bool-field'].type.primitive_type = cls.__BOOL_TYPE
-        template.fields['bool-field'].display_name = 'Bool Field'
+        bool_field = datacatalog.TagTemplateField()
+        bool_field.type.primitive_type = cls.__BOOL_TYPE
+        template.fields['bool-field'] = bool_field
 
-        template.fields['double-field'].type.primitive_type = cls.__DOUBLE_TYPE
-        template.fields['double-field'].display_name = 'Double Field'
+        double_field = datacatalog.TagTemplateField()
+        double_field.type.primitive_type = cls.__DOUBLE_TYPE
+        template.fields['double-field'] = double_field
 
-        template.fields['string-field'].type.primitive_type = cls.__STRING_TYPE
-        template.fields['string-field'].display_name = 'String Field'
+        string_field = datacatalog.TagTemplateField()
+        string_field.type.primitive_type = cls.__STRING_TYPE
+        template.fields['string-field'] = string_field
 
-        template.fields['timestamp-field'].type.primitive_type = \
-            cls.__TIMESTAMP_TYPE
-        template.fields['timestamp-field'].display_name = 'Timestamp Field'
+        timestamp_field = datacatalog.TagTemplateField()
+        timestamp_field.type.primitive_type = cls.__TIMESTAMP_TYPE
+        template.fields['timestamp-field'] = timestamp_field
 
-        template.fields['enum-field'].type.enum_type.allowed_values \
-            .add().display_name = 'Test ENUM Value'
+        enum_value = datacatalog.FieldType.EnumType.EnumValue()
+        enum_value.display_name = 'Test ENUM Value'
+        enum_field = datacatalog.TagTemplateField()
+        enum_field.type.enum_type.allowed_values.append(enum_value)
+        template.fields['enum-field'] = enum_field
 
         return tag_template_id, template

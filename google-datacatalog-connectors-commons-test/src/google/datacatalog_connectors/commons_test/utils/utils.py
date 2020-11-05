@@ -21,21 +21,17 @@ import re
 from google.datacatalog_connectors.commons import ingest
 from google.datacatalog_connectors.commons import prepare
 
-from google.cloud.datacatalog import types
-from google.cloud import datacatalog_v1beta1
+from google.cloud import datacatalog
+from google.protobuf import timestamp_pb2
 
 import pandas as pd
 
 
 class Utils:
-    __BOOL_TYPE = \
-        datacatalog_v1beta1.enums.FieldType.PrimitiveType.BOOL
-    __DOUBLE_TYPE = \
-        datacatalog_v1beta1.enums.FieldType.PrimitiveType.DOUBLE
-    __STRING_TYPE = \
-        datacatalog_v1beta1.enums.FieldType.PrimitiveType.STRING
-    __TIMESTAMP_TYPE = \
-        datacatalog_v1beta1.enums.FieldType.PrimitiveType.TIMESTAMP
+    __BOOL_TYPE = datacatalog.FieldType.PrimitiveType.BOOL
+    __DOUBLE_TYPE = datacatalog.FieldType.PrimitiveType.DOUBLE
+    __STRING_TYPE = datacatalog.FieldType.PrimitiveType.STRING
+    __TIMESTAMP_TYPE = datacatalog.FieldType.PrimitiveType.TIMESTAMP
 
     @classmethod
     def create_assembled_entries_user_defined_types(cls):
@@ -61,22 +57,22 @@ class Utils:
                                                  name,
                                                  description,
                                                  linked_resource,
-                                                 create_time,
-                                                 update_time,
+                                                 create_time_seconds,
+                                                 update_time_seconds,
                                                  columns=None):
 
         entry = cls.create_entry_user_defined_type(
             entry_type, system, display_name, name, description,
-            linked_resource, create_time, update_time, columns)
+            linked_resource, create_time_seconds, update_time_seconds, columns)
 
         return prepare.AssembledEntryData(entry_id, entry, None)
 
     @classmethod
     def create_column_schema(cls, name, column_type, description, mode=None):
-        return types.ColumnSchema(column=name,
-                                  type=column_type,
-                                  description=description,
-                                  mode=mode)
+        return datacatalog.ColumnSchema(column=name,
+                                        type=column_type,
+                                        description=description,
+                                        mode=mode)
 
     @classmethod
     def convert_json_to_str(cls, json_obj):
@@ -98,13 +94,13 @@ class Utils:
                                name,
                                description,
                                linked_resource,
-                               create_time,
-                               update_time,
+                               create_time_seconds,
+                               update_time_seconds,
                                column_schemas,
                                tags=None):
         user_defined_entry = Utils.create_user_defined_entry(
             entry_id, entry_type, system, display_name, name, description,
-            linked_resource, create_time, update_time, tags)
+            linked_resource, create_time_seconds, update_time_seconds, tags)
         entry = user_defined_entry.entry
         entry.schema.columns.extend(column_schemas)
         return user_defined_entry
@@ -117,11 +113,11 @@ class Utils:
                                        name,
                                        description,
                                        linked_resource,
-                                       create_time,
-                                       update_time,
+                                       create_time_seconds,
+                                       update_time_seconds,
                                        columns=None):
 
-        entry = types.Entry()
+        entry = datacatalog.Entry()
 
         entry.user_specified_type = entry_type
         entry.user_specified_system = system
@@ -129,8 +125,12 @@ class Utils:
         entry.display_name = display_name
         entry.name = name
 
-        entry.source_system_timestamps.create_time.seconds = create_time
-        entry.source_system_timestamps.update_time.seconds = update_time
+        create_timestamp = timestamp_pb2.Timestamp()
+        create_timestamp.FromSeconds(create_time_seconds)
+        update_timestamp = timestamp_pb2.Timestamp()
+        update_timestamp.FromSeconds(update_time_seconds)
+        entry.source_system_timestamps.create_time = create_timestamp
+        entry.source_system_timestamps.update_time = update_timestamp
 
         entry.description = description
         entry.linked_resource = linked_resource
@@ -142,7 +142,7 @@ class Utils:
 
     @classmethod
     def create_fake_tag(cls):
-        tag = datacatalog_v1beta1.types.Tag()
+        tag = datacatalog.Tag()
         tag.name = 'tag_template'
         tag.template = 'test-template'
         tag.fields['test-bool-field'].bool_value = True
@@ -157,7 +157,7 @@ class Utils:
 
     @classmethod
     def create_fake_tag_template(cls):
-        tag_template = datacatalog_v1beta1.types.TagTemplate()
+        tag_template = datacatalog.TagTemplate()
 
         tag_template_id = 'template'
 
@@ -245,10 +245,10 @@ class Utils:
                                   name,
                                   description,
                                   linked_resource,
-                                  create_time,
-                                  update_time,
+                                  create_time_seconds,
+                                  update_time_seconds,
                                   tags=None):
-        entry = datacatalog_v1beta1.types.Entry()
+        entry = datacatalog.Entry()
 
         entry.user_specified_type = entry_type
         entry.user_specified_system = system
@@ -257,9 +257,12 @@ class Utils:
 
         entry.name = name
 
-        entry.source_system_timestamps.create_time.seconds = create_time
-
-        entry.source_system_timestamps.update_time.seconds = update_time
+        create_timestamp = timestamp_pb2.Timestamp()
+        create_timestamp.FromSeconds(create_time_seconds)
+        update_timestamp = timestamp_pb2.Timestamp()
+        update_timestamp.FromSeconds(update_time_seconds)
+        entry.source_system_timestamps.create_time = create_timestamp
+        entry.source_system_timestamps.update_time = update_timestamp
 
         entry.description = description
         entry.linked_resource = linked_resource

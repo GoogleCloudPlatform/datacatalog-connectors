@@ -16,7 +16,7 @@
 
 import setuptools
 
-release_status='Development Status :: 4 - Beta'
+release_status = 'Development Status :: 4 - Beta'
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
@@ -31,7 +31,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=('google-cloud-monitoring>=1,<2', 'python-dateutil',
-                      'google-cloud-datacatalog>=1,<2'),
+                      'google-cloud-datacatalog>=2'),
     setup_requires=('pytest-runner',),
     tests_require=('mock==3.0.5', 'pytest', 'pytest-cov',
                    'google-datacatalog-connectors-commons-test'),
