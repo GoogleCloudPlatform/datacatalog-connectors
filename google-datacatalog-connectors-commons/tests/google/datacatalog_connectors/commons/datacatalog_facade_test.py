@@ -122,10 +122,8 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
 
         self.assertEqual(1, datacatalog_client.get_entry.call_count)
         self.assertEqual(1, datacatalog_client.update_entry.call_count)
-        datacatalog_client.update_entry.assert_called_with(request={
-            'entry': entry_2,
-            'update_mask': None
-        })
+        datacatalog_client.update_entry.assert_called_with(entry=entry_2,
+                                                           update_mask=None)
 
     def test_upsert_entry_should_return_original_on_failed_precondition(self):
         entry_1 = utils.Utils.create_entry_user_defined_type(
