@@ -23,7 +23,7 @@ with open('README.md') as readme_file:
 
 setuptools.setup(
     name='google-datacatalog-connectors-commons',
-    version='0.5.1',
+    version='0.6.0',
     author='Google LLC',
     description='Common resources for Data Catalog connectors',
     packages=setuptools.find_packages(where='./src'),
