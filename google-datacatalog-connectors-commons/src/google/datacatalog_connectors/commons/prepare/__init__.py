@@ -18,6 +18,8 @@ from .assembled_entry_data import AssembledEntryData
 from .base_entry_factory import BaseEntryFactory
 from .base_entry_relationship_mapper import BaseEntryRelationshipMapper
 from .base_tag_factory import BaseTagFactory
+from .base_tag_template_factory import BaseTagTemplateFactory
 
 __all__ = ('AssembledEntryData', 'BaseEntryFactory',
-           'BaseEntryRelationshipMapper', 'BaseTagFactory')
+           'BaseEntryRelationshipMapper', 'BaseTagFactory',
+           'BaseTagTemplateFactory')

@@ -43,11 +43,9 @@ class DataCatalogFacade:
         :return: The created Entry.
         """
         try:
-            entry = self.__datacatalog.create_entry(request={
-                'parent': entry_group_name,
-                'entry_id': entry_id,
-                'entry': entry
-            })
+            entry = self.__datacatalog.create_entry(parent=entry_group_name,
+                                                    entry_id=entry_id,
+                                                    entry=entry)
             self.__log_entry_operation('created', entry=entry)
         except exceptions.PermissionDenied as e:
             entry_name = '{}/entries/{}'.format(entry_group_name, entry_id)
@@ -63,7 +61,7 @@ class DataCatalogFacade:
         :param name: The Entry name.
         :return: An Entry object if it exists.
         """
-        return self.__datacatalog.get_entry(request={'name': name})
+        return self.__datacatalog.get_entry(name=name)
 
     def update_entry(self, entry):
         """Updates an Entry.
@@ -71,10 +69,7 @@ class DataCatalogFacade:
         :param entry: An Entry object.
         :return: The updated Entry.
         """
-        entry = self.__datacatalog.update_entry(request={
-            'entry': entry,
-            'update_mask': None
-        })
+        entry = self.__datacatalog.update_entry(entry=entry, update_mask=None)
         self.__log_entry_operation('updated', entry=entry)
         return entry
 
@@ -114,10 +109,15 @@ class DataCatalogFacade:
     def __entry_was_updated(cls, current_entry, new_entry):
         # Update time comparison allows to verify whether the entry was
         # updated on the source system.
-        current_update_time = \
-            current_entry.source_system_timestamps.update_time.timestamp()
-        new_update_time = \
-            new_entry.source_system_timestamps.update_time.timestamp()
+        current_update_time = 0
+        if current_entry.source_system_timestamps.update_time:
+            current_update_time = \
+                current_entry.source_system_timestamps.update_time.timestamp()
+
+        new_update_time = 0
+        if new_entry.source_system_timestamps.update_time:
+            new_update_time = \
+                new_entry.source_system_timestamps.update_time.timestamp()
 
         updated_time_changed = \
             new_update_time != 0 and current_update_time != new_update_time
@@ -149,7 +149,7 @@ class DataCatalogFacade:
         :param name: The Entry name.
         """
         try:
-            self.__datacatalog.delete_entry(request={'name': name})
+            self.__datacatalog.delete_entry(name=name)
             self.__log_entry_operation('deleted', entry_name=name)
         except Exception as e:
             logging.info(
@@ -176,12 +176,9 @@ class DataCatalogFacade:
         :return: The created Entry Group.
         """
         entry_group = self.__datacatalog.create_entry_group(
-            request={
-                'parent': f'projects/{self.__project_id}'
-                          f'/locations/{location_id}',
-                'entry_group_id': entry_group_id,
-                'entry_group': {}
-            })
+            parent=f'projects/{self.__project_id}/locations/{location_id}',
+            entry_group_id=entry_group_id,
+            entry_group=datacatalog.EntryGroup())
         logging.info('Entry Group created: %s', entry_group.name)
         return entry_group
 
@@ -191,7 +188,7 @@ class DataCatalogFacade:
 
         :param name: The Entry Group name.
         """
-        self.__datacatalog.delete_entry_group(request={'name': name})
+        self.__datacatalog.delete_entry_group(name=name)
 
     def create_tag_template(self, location_id, tag_template_id, tag_template):
         """Creates a Data Catalog Tag Template.
@@ -202,12 +199,9 @@ class DataCatalogFacade:
         :return: The created Tag Template.
         """
         created_tag_template = self.__datacatalog.create_tag_template(
-            request={
-                'parent': f'projects/{self.__project_id}'
-                          f'/locations/{location_id}',
-                'tag_template_id': tag_template_id,
-                'tag_template': tag_template
-            })
+            parent=f'projects/{self.__project_id}/locations/{location_id}',
+            tag_template_id=tag_template_id,
+            tag_template=tag_template)
 
         logging.info('Tag Template created: %s', created_tag_template.name)
         return created_tag_template
@@ -218,7 +212,7 @@ class DataCatalogFacade:
         :param name: The Tag Templane name.
         :return: A Tag Template object if it exists.
         """
-        return self.__datacatalog.get_tag_template(request={'name': name})
+        return self.__datacatalog.get_tag_template(name=name)
 
     def get_tag_field_values_for_search_results(self, query, template,
                                                 tag_field, tag_field_type):
@@ -258,10 +252,7 @@ class DataCatalogFacade:
 
         :param name: The Tag Template name.
         """
-        self.__datacatalog.delete_tag_template(request={
-            'name': name,
-            'force': True
-        })
+        self.__datacatalog.delete_tag_template(name=name, force=True)
         logging.info('Tag Template deleted: %s', name)
 
     def create_tag(self, entry_name, tag):
@@ -271,10 +262,7 @@ class DataCatalogFacade:
         :param tag: A Tag object.
         :return: The created Tag.
         """
-        return self.__datacatalog.create_tag(request={
-            'parent': entry_name,
-            'tag': tag
-        })
+        return self.__datacatalog.create_tag(parent=entry_name, tag=tag)
 
     def delete_tag(self, tag):
         """Deletes a Data Catalog Tag.
@@ -282,7 +270,7 @@ class DataCatalogFacade:
         :param tag: A Tag object.
         :return: The deleted Tag.
         """
-        return self.__datacatalog.delete_tag(request={'name': tag.name})
+        return self.__datacatalog.delete_tag(name=tag.name)
 
     def list_tags(self, entry_name):
         """List Tags for a given Entry.
@@ -290,7 +278,7 @@ class DataCatalogFacade:
         :param entry_name: The parent Entry name.
         :return: A list of Tag objects.
         """
-        return self.__datacatalog.list_tags(request={'parent': entry_name})
+        return self.__datacatalog.list_tags(parent=entry_name)
 
     def update_tag(self, tag):
         """Updates a Tag.
@@ -298,10 +286,7 @@ class DataCatalogFacade:
         :param tag: A Tag object.
         :return: The updated Tag.
         """
-        return self.__datacatalog.update_tag(request={
-            'tag': tag,
-            'update_mask': None
-        })
+        return self.__datacatalog.update_tag(tag=tag, update_mask=None)
 
     def upsert_tags(self, entry, tags):
         """Updates or creates Tag for a given Entry.
@@ -415,14 +400,13 @@ class DataCatalogFacade:
         scope = datacatalog.SearchCatalogRequest.Scope()
         scope.include_project_ids.append(self.__project_id)
 
+        request = datacatalog.SearchCatalogRequest()
+        request.scope = scope
+        request.query = query
+        request.page_size = 1000
+
         return [
-            result for result in self.__datacatalog.search_catalog(
-                request={
-                    'scope': scope,
-                    'query': query,
-                    'page_size': 'relevance',
-                    'page_token': 1000
-                })
+            result for result in self.__datacatalog.search_catalog(request)
         ]
 
     def search_catalog_relative_resource_name(self, query):

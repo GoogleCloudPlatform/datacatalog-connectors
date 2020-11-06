@@ -22,14 +22,11 @@ from google.datacatalog_connectors.commons import prepare
 
 class BaseEntryFactoryTestCase(unittest.TestCase):
 
-    def setUp(self):
-        self.__base_entry_factory = prepare.BaseEntryFactory()
-
     def test_format_id_should_normalize_non_compliant_id(self):
-        formatted_id = self.__base_entry_factory._format_id(u'ã123 - b456  ')
+        formatted_id = prepare.BaseEntryFactory._format_id(u'ã123 - b456  ')
         self.assertEqual('a123_b456', formatted_id)
 
     def test_format_display_name_should_normalize_non_compliant_name(self):
-        formatted_name = self.__base_entry_factory._format_display_name(
+        formatted_name = prepare.BaseEntryFactory._format_display_name(
             u'ã123 :?: b456  ')
         self.assertEqual('a123 _ b456', formatted_name)
