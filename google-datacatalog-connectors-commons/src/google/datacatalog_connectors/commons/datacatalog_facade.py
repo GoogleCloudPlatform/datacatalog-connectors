@@ -364,7 +364,7 @@ class DataCatalogFacade:
         for field_id in tag_1.fields:
             tag_1_field = tag_1.fields[field_id]
             tag_2_field = tag_2.fields.get(field_id)
-            
+
             if tag_2_field is None:
                 return False
 
