@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         build-dir: ['./google-datacatalog-connectors-commons']
-        python-version: [3.6, 3.7]
+        python-version: [3.6, 3.7, 3.8]
     defaults:
       run:
         working-directory: ${{ matrix.build-dir }}
@@ -50,7 +50,7 @@ jobs:
     strategy:
       matrix:
         build-dir: ['./google-datacatalog-connectors-commons-test']
-        python-version: [3.6, 3.7]
+        python-version: [3.6, 3.7, 3.8]
     defaults:
       run:
         working-directory: ${{ matrix.build-dir }}
