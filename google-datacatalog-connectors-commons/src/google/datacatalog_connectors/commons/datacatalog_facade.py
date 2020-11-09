@@ -363,7 +363,10 @@ class DataCatalogFacade:
     def __tag_fields_are_equal(cls, tag_1, tag_2):
         for field_id in tag_1.fields:
             tag_1_field = tag_1.fields[field_id]
-            tag_2_field = tag_2.fields[field_id]
+            tag_2_field = tag_2.fields.get(field_id)
+
+            if tag_2_field is None:
+                return False
 
             values_are_equal = tag_1_field.bool_value == \
                 tag_2_field.bool_value
