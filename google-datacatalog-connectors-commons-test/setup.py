@@ -31,7 +31,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=('pandas==0.24.2',
-                      'google-datacatalog-connectors-commons'),
+                      'google-datacatalog-connectors-commons>=0.6.0'),
     setup_requires=('pytest-runner',),
     tests_require=(
         'mock==3.0.5',
