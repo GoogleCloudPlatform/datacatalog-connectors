@@ -257,6 +257,47 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.create_tag.assert_not_called()
         self.assertEqual(1, datacatalog_client.update_tag.call_count)
 
+    def test_upsert_tags_changed_column_uppercase_should_succeed(self):
+        datacatalog_client = self.__datacatalog_client
+
+        current_tag = self.__create_tag()
+        current_tag.column = 'ABC'
+
+        datacatalog_client.list_tags.return_value = [current_tag]
+
+        entry = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource', 11, 22)
+
+        changed_tag = self.__create_tag()
+        changed_tag.column = 'abc'
+        changed_tag.fields['bool-field'].bool_value = False
+
+        self.__datacatalog_facade.upsert_tags(entry, [changed_tag])
+
+        datacatalog_client.create_tag.assert_not_called()
+        self.assertEqual(1, datacatalog_client.update_tag.call_count)
+
+    def test_upsert_tags_unchanged_column_uppercase_should_succeed(self):
+        entry = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource', 11, 22)
+
+        current_tag = self.__create_tag()
+        current_tag.column = 'ABC'
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.list_tags.return_value = [current_tag]
+
+        # column name is case insensitive, so it's the same column.
+        tag = self.__create_tag()
+        tag.column = 'abc'
+
+        self.__datacatalog_facade.upsert_tags(entry, [tag])
+
+        datacatalog_client.create_tag.assert_not_called()
+        datacatalog_client.update_tag.assert_not_called()
+
     def test_upsert_tags_unchanged_should_succeed(self):
         entry = utils.Utils.create_entry_user_defined_type(
             'type', 'system', 'display_name', 'name', 'description',
