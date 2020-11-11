@@ -308,8 +308,9 @@ class DataCatalogFacade:
             tag_to_create = tag
             tag_to_update = None
             for persisted_tag in persisted_tags:
+                # column name is case insensitive.
                 if tag.template == persisted_tag.template and \
-                   tag.column == persisted_tag.column:
+                   tag.column.lower() == persisted_tag.column.lower():
 
                     tag_to_create = None
                     tag.name = persisted_tag.name
