@@ -257,7 +257,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.create_tag.assert_not_called()
         self.assertEqual(1, datacatalog_client.update_tag.call_count)
 
-    def test_upsert_columntags_changed_should_succeed(self):
+    def test_upsert_tags_changed_column_uppercase_should_succeed(self):
         datacatalog_client = self.__datacatalog_client
 
         current_tag = self.__create_tag()
