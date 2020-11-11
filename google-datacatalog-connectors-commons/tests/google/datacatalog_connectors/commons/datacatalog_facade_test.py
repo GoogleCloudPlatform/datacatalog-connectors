@@ -278,7 +278,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.create_tag.assert_not_called()
         self.assertEqual(1, datacatalog_client.update_tag.call_count)
 
-    def test_upsert_column_tags_unchanged_should_succeed(self):
+    def test_upsert_tags_unchanged_column_uppercase_should_succeed(self):
         entry = utils.Utils.create_entry_user_defined_type(
             'type', 'system', 'display_name', 'name', 'description',
             'linked_resource', 11, 22)
