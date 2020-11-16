@@ -269,9 +269,10 @@ class Utils:
         return ingest.AssembledEntryData(entry_id, entry, tags)
 
     @classmethod
-    def get_metadata_def_obj(cls, module_path):
+    def get_metadata_def_obj(cls, module_path,
+     metadata_def_file_name='metadata_definition.json'):
         resolved_name = Utils.get_resolved_file_name(
-            module_path, 'metadata_definition.json')
+            module_path, metadata_def_file_name)
         with open(resolved_name, 'r') as f:
             return json.load(f, object_hook=Utils.__timestamp_parser)
 
