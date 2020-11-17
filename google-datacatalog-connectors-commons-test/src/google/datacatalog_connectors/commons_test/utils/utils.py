@@ -277,6 +277,10 @@ class Utils:
             return json.load(f, object_hook=Utils.__timestamp_parser)
 
     @classmethod
+    def get_test_config_path(cls, module_path):
+        return os.path.join(module_path, '../test_data')
+
+    @classmethod
     def get_resolved_file_name(cls, module_path, name):
         resolved_name = os.path.join(module_path,
                                      '../test_data/{}'.format(name))
