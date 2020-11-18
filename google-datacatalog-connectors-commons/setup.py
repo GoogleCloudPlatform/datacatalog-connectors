@@ -23,7 +23,7 @@ with open('README.md') as readme_file:
 
 setuptools.setup(
     name='google-datacatalog-connectors-commons',
-    version='0.6.2',
+    version='0.6.3',
     author='Google LLC',
     description='Common resources for Data Catalog connectors',
     packages=setuptools.find_packages(where='./src'),
@@ -31,7 +31,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=('google-cloud-monitoring>=1,<2', 'python-dateutil',
-                      'google-cloud-datacatalog>=2'),
+                      'google-cloud-datacatalog>=2,<3'),
     setup_requires=('pytest-runner',),
     tests_require=('mock==3.0.5', 'pytest', 'pytest-cov',
                    'google-datacatalog-connectors-commons-test>=0.6.0'),
