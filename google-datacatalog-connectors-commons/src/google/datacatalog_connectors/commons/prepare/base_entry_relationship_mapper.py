@@ -65,11 +65,9 @@ class BaseEntryRelationshipMapper(ABC):
     def _map_related_entry(cls, assembled_entry_data, related_asset_type,
                            source_field_id, target_field_id, id_name_pairs):
 
-        relationship_tag_dict = {}
+        relationship_tags_dict = {}
+        tags = assembled_entry_data.tags or []
         related_asset_ids = []
-        tags = assembled_entry_data.tags
-        if not tags:
-            return
 
         for tag in tags:
             if source_field_id not in tag.fields:
@@ -79,18 +77,21 @@ class BaseEntryRelationshipMapper(ABC):
                 if source_field.string_value \
                 else int(source_field.double_value)
             related_asset_ids.append(related_asset_id)
-            relationship_tag_dict[related_asset_id] = tag
+            if not relationship_tags_dict.get(related_asset_id):
+                relationship_tags_dict[related_asset_id] = []
+            relationship_tags_dict[related_asset_id].append(tag)
 
-        if related_asset_ids:
-            for related_asset_id in related_asset_ids:
-                related_asset_key = '{}-{}'.format(related_asset_type,
-                                                   related_asset_id)
-                if related_asset_key in id_name_pairs:
-                    relationship_tag = relationship_tag_dict[related_asset_id]
-                    string_field = datacatalog.TagField()
-                    string_field.string_value = cls.__format_related_entry_url(
-                        id_name_pairs[related_asset_key])
-                    relationship_tag.fields[target_field_id] = string_field
+        for related_asset_id in related_asset_ids:
+            related_asset_key = '{}-{}'.format(related_asset_type,
+                                               related_asset_id)
+            if related_asset_key not in id_name_pairs:
+                continue
+
+            for relationship_tag in relationship_tags_dict[related_asset_id]:
+                string_field = datacatalog.TagField()
+                string_field.string_value = cls.__format_related_entry_url(
+                    id_name_pairs[related_asset_key])
+                relationship_tag.fields[target_field_id] = string_field
 
     @classmethod
     def __format_related_entry_url(cls, entry_name):
