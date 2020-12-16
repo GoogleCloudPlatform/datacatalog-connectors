@@ -30,7 +30,8 @@ class BaseEntryFactoryTestCase(unittest.TestCase):
         long_str = 'organization_warehouse7192ecb2__personsc3a8d512_' \
                    'business_area_and_segment_of_marketing'
 
-        expected_str = 'organization_warehouse7192ecb2_personsc3a8d512_business_7074c286'
+        expected_str = 'organization_warehouse7192ecb2_personsc3a8d512_' \
+                       'business_7074c286'
 
         formatted_id = prepare.BaseEntryFactory._format_id_with_hashing(
             long_str, 8)
