@@ -184,8 +184,9 @@ class DataCatalogFacade:
             return False
 
         for new_column in new_columns:
-            found_column = next((current_column for current_column in current_columns if
-                                 current_column.column == new_column.column), None)
+            found_column = next(
+                (current_column for current_column in current_columns
+                 if current_column.column == new_column.column), None)
 
             if not found_column:
                 return False
