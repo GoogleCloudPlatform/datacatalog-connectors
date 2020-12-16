@@ -129,32 +129,32 @@ class DataCatalogFacade:
             current_entry, new_entry)
 
     @classmethod
-    def __entries_are_equal(cls, current_entry, new_entry):
+    def __entries_are_equal(cls, entry_1, entry_2):
         object_1 = utils.ValuesComparableObject()
-        object_1.user_specified_system = current_entry.user_specified_system
-        object_1.user_specified_type = current_entry.user_specified_type
-        object_1.display_name = current_entry.display_name
-        object_1.description = current_entry.description
-        object_1.linked_resource = current_entry.linked_resource
+        object_1.user_specified_system = entry_1.user_specified_system
+        object_1.user_specified_type = entry_1.user_specified_type
+        object_1.display_name = entry_1.display_name
+        object_1.description = entry_1.description
+        object_1.linked_resource = entry_1.linked_resource
 
         object_2 = utils.ValuesComparableObject()
-        object_2.user_specified_system = new_entry.user_specified_system
-        object_2.user_specified_type = new_entry.user_specified_type
-        object_2.display_name = new_entry.display_name
-        object_2.description = new_entry.description
-        object_2.linked_resource = new_entry.linked_resource
+        object_2.user_specified_system = entry_2.user_specified_system
+        object_2.user_specified_type = entry_2.user_specified_type
+        object_2.display_name = entry_2.display_name
+        object_2.description = entry_2.description
+        object_2.linked_resource = entry_2.linked_resource
 
         return object_1 == object_2 and cls.__schemas_are_equal(
-            current_entry.schema, new_entry.schema)
+            entry_1.schema, entry_2.schema)
 
     @classmethod
-    def __schemas_are_equal(cls, current_schema, new_schema):
-        current_columns = current_schema.columns
-        new_columns = new_schema.columns
+    def __schemas_are_equal(cls, schema_1, schema_2):
+        columns_1 = schema_1.columns
+        columns_2 = schema_2.columns
 
         columns_are_equal = set(
-            [current_column.column for current_column in current_columns]) == \
-            set(new_column.column for new_column in new_columns)
+            [column_1.column for column_1 in columns_1]) == \
+            set(column_2.column for column_2 in columns_2)
 
         # No more checks needed if columns don't match.
         # For example, in case a column is deleted or
@@ -162,50 +162,49 @@ class DataCatalogFacade:
         if not columns_are_equal:
             return False
 
-        for new_column in new_columns:
-            found_column = next(
-                (current_column for current_column in current_columns
-                 if current_column.column == new_column.column), None)
+        for column_1 in columns_2:
+            column_to_evaluate = next(
+                (column_2 for column_2 in columns_1
+                 if column_2.column == column_1.column), None)
 
-            if not found_column:
-                return False
-
-            if not cls.__columns_fields_are_equal(found_column, new_column):
+            if not column_to_evaluate or not cls.__column_fields_are_equal(
+                    column_to_evaluate,
+                    column_1):
                 return False
 
         return True
 
     @classmethod
-    def __columns_fields_are_equal(cls, current_column, new_column):
+    def __column_fields_are_equal(cls, column_1, column_2):
         object_1 = utils.ValuesComparableObject()
-        object_1.column = current_column.column
-        object_1.description = current_column.description
-        object_1.type = current_column.type
+        object_1.column = column_1.column
+        object_1.description = column_1.description
+        object_1.type = column_1.type
 
         # We need to initialize with the default MODE if it is not fulfilled.
-        if not current_column.mode:
-            current_column.mode = cls.__DEFAULT_COLUMN_MODE
+        if not column_1.mode:
+            column_1.mode = cls.__DEFAULT_COLUMN_MODE
 
-        object_1.mode = current_column.mode
+        object_1.mode = column_1.mode
 
         # Currently, we simply compare the subcolumns length.
         # The connectors do not handle this field at present.
-        object_1.subcolumns_len = len(current_column.subcolumns)
+        object_1.subcolumns_len = len(column_1.subcolumns)
 
         object_2 = utils.ValuesComparableObject()
-        object_2.column = new_column.column
-        object_2.description = new_column.description
-        object_2.type = new_column.type
+        object_2.column = column_2.column
+        object_2.description = column_2.description
+        object_2.type = column_2.type
 
         # We need to initialize with the default MODE if it is not fulfilled.
-        if not new_column.mode:
-            new_column.mode = cls.__DEFAULT_COLUMN_MODE
+        if not column_2.mode:
+            column_2.mode = cls.__DEFAULT_COLUMN_MODE
 
-        object_2.mode = new_column.mode
+        object_2.mode = column_2.mode
 
         # Currently, we simply compare the subcolumns length.
         # The connectors do not handle this field at present.
-        object_2.subcolumns_len = len(new_column.subcolumns)
+        object_2.subcolumns_len = len(column_2.subcolumns)
 
         return object_1 == object_2
 
