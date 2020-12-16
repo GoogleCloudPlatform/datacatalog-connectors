@@ -32,7 +32,8 @@ class BaseEntryFactoryTestCase(unittest.TestCase):
 
         expected_str = 'organization_warehouse7192ecb2_personsc3a8d512_business_7074c286'
 
-        formatted_id = prepare.BaseEntryFactory._format_id_with_hashing(long_str, 8)
+        formatted_id = prepare.BaseEntryFactory._format_id_with_hashing(
+            long_str, 8)
         self.assertEqual(expected_str, formatted_id)
 
     def test_format_display_name_should_normalize_non_compliant_name(self):
