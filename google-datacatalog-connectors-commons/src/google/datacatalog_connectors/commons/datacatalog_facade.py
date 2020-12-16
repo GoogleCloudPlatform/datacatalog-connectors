@@ -163,13 +163,12 @@ class DataCatalogFacade:
             return False
 
         for column_1 in columns_2:
-            column_to_evaluate = next(
-                (column_2 for column_2 in columns_1
-                 if column_2.column == column_1.column), None)
+            column_to_evaluate = next((column_2 for column_2 in columns_1
+                                       if column_2.column == column_1.column),
+                                      None)
 
             if not column_to_evaluate or not cls.__column_fields_are_equal(
-                    column_to_evaluate,
-                    column_1):
+                    column_to_evaluate, column_1):
                 return False
 
         return True
