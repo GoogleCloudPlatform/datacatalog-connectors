@@ -30,6 +30,9 @@ class DataCatalogFacade:
     __STRING_TYPE = datacatalog.FieldType.PrimitiveType.STRING
     __TIMESTAMP_TYPE = datacatalog.FieldType.PrimitiveType.TIMESTAMP
 
+    # This is the value automatically set up by the GRPC client.
+    __DEFAULT_COLUMN_MODE = 'NULLABLE'
+
     def __init__(self, project_id):
         self.__datacatalog = datacatalog.DataCatalogClient()
         self.__project_id = project_id
@@ -145,6 +148,67 @@ class DataCatalogFacade:
         object_2.display_name = entry_2.display_name
         object_2.description = entry_2.description
         object_2.linked_resource = entry_2.linked_resource
+
+        return object_1 == object_2 and cls.__schemas_are_equal(
+            entry_1.schema, entry_2.schema)
+
+    @classmethod
+    def __schemas_are_equal(cls, schema_1, schema_2):
+        columns_1 = schema_1.columns
+        columns_2 = schema_2.columns
+
+        column_names_are_equal = set(
+            [column_1.column for column_1 in columns_1]) == \
+            set(column_2.column for column_2 in columns_2)
+
+        # No more checks needed if the column names don't match.
+        # For example, in case a column is deleted or
+        # a new column is created.
+        if not column_names_are_equal:
+            return False
+
+        for column_2 in columns_2:
+            column_to_evaluate = next((column_1 for column_1 in columns_1
+                                       if column_2.column == column_1.column),
+                                      None)
+
+            if not (column_to_evaluate and cls.__column_fields_are_equal(
+                    column_to_evaluate, column_2)):
+                return False
+
+        return True
+
+    @classmethod
+    def __column_fields_are_equal(cls, column_1, column_2):
+        object_1 = utils.ValuesComparableObject()
+        object_1.column = column_1.column
+        object_1.description = column_1.description
+        object_1.type = column_1.type
+
+        # We need to initialize with the default MODE if it is not fulfilled.
+        if not column_1.mode:
+            column_1.mode = cls.__DEFAULT_COLUMN_MODE
+
+        object_1.mode = column_1.mode
+
+        # Currently, we simply compare the subcolumns length.
+        # The connectors do not handle this field at present.
+        object_1.subcolumns_len = len(column_1.subcolumns)
+
+        object_2 = utils.ValuesComparableObject()
+        object_2.column = column_2.column
+        object_2.description = column_2.description
+        object_2.type = column_2.type
+
+        # We need to initialize with the default MODE if it is not fulfilled.
+        if not column_2.mode:
+            column_2.mode = cls.__DEFAULT_COLUMN_MODE
+
+        object_2.mode = column_2.mode
+
+        # Currently, we simply compare the subcolumns length.
+        # The connectors do not handle this field at present.
+        object_2.subcolumns_len = len(column_2.subcolumns)
 
         return object_1 == object_2
 
