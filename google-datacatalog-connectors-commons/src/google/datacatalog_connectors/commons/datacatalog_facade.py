@@ -156,8 +156,8 @@ class DataCatalogFacade:
             [current_column.column for current_column in current_columns]) == \
             set(new_column.column for new_column in new_columns)
 
-        # If columns don't match return early for optimization
-        # for example in case a column is deleted or
+        # No more checks needed if columns don't match.
+        # For example, in case a column is deleted or
         # a new column is created.
         if not columns_are_equal:
             return False
@@ -182,14 +182,14 @@ class DataCatalogFacade:
         object_1.description = current_column.description
         object_1.type = current_column.type
 
-        # If it is not fulfilled we need to initialize with the default MODE.
+        # We need to initialize with the default MODE if it is not fulfilled.
         if not current_column.mode:
             current_column.mode = cls.__DEFAULT_COLUMN_MODE
 
         object_1.mode = current_column.mode
 
-        # Currently we only look at the subcolumns length
-        # connectors do not utilize this field at the moment.
+        # Currently, we simply compare the subcolumns length.
+        # The connectors do not handle this field at present.
         object_1.subcolumns_len = len(current_column.subcolumns)
 
         object_2 = utils.ValuesComparableObject()
@@ -197,14 +197,14 @@ class DataCatalogFacade:
         object_2.description = new_column.description
         object_2.type = new_column.type
 
-        # If it is not fulfilled we need to initialize with the default MODE.
+        # We need to initialize with the default MODE if it is not fulfilled.
         if not new_column.mode:
             new_column.mode = cls.__DEFAULT_COLUMN_MODE
 
         object_2.mode = new_column.mode
 
-        # Currently we only look at the subcolumns length
-        # connectors do not utilize this field at the moment.
+        # Currently, we simply compare the subcolumns length.
+        # The connectors do not handle this field at present.
         object_2.subcolumns_len = len(new_column.subcolumns)
 
         return object_1 == object_2

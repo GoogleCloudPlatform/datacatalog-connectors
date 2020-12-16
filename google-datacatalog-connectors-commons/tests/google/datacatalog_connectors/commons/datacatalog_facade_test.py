@@ -181,7 +181,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.update_entry.assert_called_with(entry=entry_2,
                                                            update_mask=None)
 
-    def test_upsert_entry_colum_deleted_should_update(self):
+    def test_upsert_entry_column_deleted_should_update(self):
         col_1 = utils.Utils.create_column_schema('column_1', 'int',
                                                  'description')
         col_2 = utils.Utils.create_column_schema('column_2', 'string',
@@ -210,7 +210,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.update_entry.assert_called_with(entry=entry_2,
                                                            update_mask=None)
 
-    def test_upsert_entry_colum_added_should_update(self):
+    def test_upsert_entry_column_added_should_update(self):
         col_1 = utils.Utils.create_column_schema('column_1', 'int',
                                                  'description')
         col_2 = utils.Utils.create_column_schema('column_2', 'string',
@@ -241,7 +241,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.update_entry.assert_called_with(entry=entry_2,
                                                            update_mask=None)
 
-    def test_upsert_entry_colum_subcolumn_added_should_update(self):
+    def test_upsert_entry_subcolumn_added_should_update(self):
         col_1 = utils.Utils.create_column_schema('column_1', 'int',
                                                  'description')
         col_2 = utils.Utils.create_column_schema('column_2', 'string',
@@ -273,7 +273,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.update_entry.assert_called_with(entry=entry_2,
                                                            update_mask=None)
 
-    def test_upsert_entry_colum_subcolumn_deleted_should_update(self):
+    def test_upsert_entry_subcolumn_deleted_should_update(self):
         col_1 = utils.Utils.create_column_schema('column_1', 'int',
                                                  'description')
         col_2 = utils.Utils.create_column_schema('column_2', 'string',
