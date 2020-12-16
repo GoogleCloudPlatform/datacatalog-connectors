@@ -26,6 +26,15 @@ class BaseEntryFactoryTestCase(unittest.TestCase):
         formatted_id = prepare.BaseEntryFactory._format_id(u'ã123 - b456  ')
         self.assertEqual('a123_b456', formatted_id)
 
+    def test_format_id_with_hashing_should_normalize_non_compliant_id(self):
+        long_str = 'organization_warehouse7192ecb2__personsc3a8d512_' \
+                   'business_area_and_segment_of_marketing'
+
+        expected_str = 'organization_warehouse7192ecb2_personsc3a8d512_business_7074c286'
+
+        formatted_id = prepare.BaseEntryFactory._format_id_with_hashing(long_str, 8)
+        self.assertEqual(expected_str, formatted_id)
+
     def test_format_display_name_should_normalize_non_compliant_name(self):
         formatted_name = prepare.BaseEntryFactory._format_display_name(
             u'ã123 :?: b456  ')
