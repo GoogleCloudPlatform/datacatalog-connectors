@@ -125,6 +125,187 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.update_entry.assert_called_with(entry=entry_2,
                                                            update_mask=None)
 
+    def test_upsert_entry_columns_equal_should_not_call_api(self):
+        col_1 = utils.Utils.create_column_schema('column_1', 'int',
+                                                 'description')
+        col_2 = utils.Utils.create_column_schema('column_2', 'string',
+                                                 'description')
+        cols = [col_1, col_2]
+
+        entry_1 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols)
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.get_entry.return_value = entry_1
+
+        entry_2 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols)
+
+        self.__datacatalog_facade.upsert_entry('entry_group_name', 'entry_id',
+                                               entry_2)
+
+        self.assertEqual(1, datacatalog_client.get_entry.call_count)
+        datacatalog_client.update_entry.assert_not_called()
+        datacatalog_client.create_entry.assert_not_called()
+
+    def test_upsert_entry_columns_changed_should_update(self):
+        col_1 = utils.Utils.create_column_schema('column_1', 'int',
+                                                 'description')
+        col_2 = utils.Utils.create_column_schema('column_2', 'string',
+                                                 'description')
+        cols = [col_1, col_2]
+
+        entry_1 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols)
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.get_entry.return_value = entry_1
+
+        col_3 = utils.Utils.create_column_schema('column_2', 'int',
+                                                 'description')
+        cols_2 = [col_1, col_3]
+
+        entry_2 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols_2)
+
+        self.__datacatalog_facade.upsert_entry('entry_group_name', 'entry_id',
+                                               entry_2)
+
+        self.assertEqual(1, datacatalog_client.get_entry.call_count)
+        datacatalog_client.create_entry.assert_not_called()
+        self.assertEqual(1, datacatalog_client.update_entry.call_count)
+        datacatalog_client.update_entry.assert_called_with(entry=entry_2,
+                                                           update_mask=None)
+
+    def test_upsert_entry_column_deleted_should_update(self):
+        col_1 = utils.Utils.create_column_schema('column_1', 'int',
+                                                 'description')
+        col_2 = utils.Utils.create_column_schema('column_2', 'string',
+                                                 'description')
+        cols = [col_1, col_2]
+
+        entry_1 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols)
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.get_entry.return_value = entry_1
+
+        cols_2 = [col_1]
+
+        entry_2 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols_2)
+
+        self.__datacatalog_facade.upsert_entry('entry_group_name', 'entry_id',
+                                               entry_2)
+
+        self.assertEqual(1, datacatalog_client.get_entry.call_count)
+        datacatalog_client.create_entry.assert_not_called()
+        self.assertEqual(1, datacatalog_client.update_entry.call_count)
+        datacatalog_client.update_entry.assert_called_with(entry=entry_2,
+                                                           update_mask=None)
+
+    def test_upsert_entry_column_added_should_update(self):
+        col_1 = utils.Utils.create_column_schema('column_1', 'int',
+                                                 'description')
+        col_2 = utils.Utils.create_column_schema('column_2', 'string',
+                                                 'description')
+        cols = [col_1, col_2]
+
+        entry_1 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols)
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.get_entry.return_value = entry_1
+
+        col_3 = utils.Utils.create_column_schema('column_3', 'string',
+                                                 'description')
+        cols_2 = [col_1, col_2, col_3]
+
+        entry_2 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols_2)
+
+        self.__datacatalog_facade.upsert_entry('entry_group_name', 'entry_id',
+                                               entry_2)
+
+        self.assertEqual(1, datacatalog_client.get_entry.call_count)
+        datacatalog_client.create_entry.assert_not_called()
+        self.assertEqual(1, datacatalog_client.update_entry.call_count)
+        datacatalog_client.update_entry.assert_called_with(entry=entry_2,
+                                                           update_mask=None)
+
+    def test_upsert_entry_subcolumn_added_should_update(self):
+        col_1 = utils.Utils.create_column_schema('column_1', 'int',
+                                                 'description')
+        col_2 = utils.Utils.create_column_schema('column_2', 'string',
+                                                 'description')
+        cols = [col_1, col_2]
+
+        entry_1 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols)
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.get_entry.return_value = entry_1
+
+        col_3 = utils.Utils.create_column_schema('column_2', 'string',
+                                                 'description')
+        col_3.subcolumns = [{}]
+        cols_2 = [col_1, col_3]
+
+        entry_2 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols_2)
+
+        self.__datacatalog_facade.upsert_entry('entry_group_name', 'entry_id',
+                                               entry_2)
+
+        self.assertEqual(1, datacatalog_client.get_entry.call_count)
+        datacatalog_client.create_entry.assert_not_called()
+        self.assertEqual(1, datacatalog_client.update_entry.call_count)
+        datacatalog_client.update_entry.assert_called_with(entry=entry_2,
+                                                           update_mask=None)
+
+    def test_upsert_entry_subcolumn_deleted_should_update(self):
+        col_1 = utils.Utils.create_column_schema('column_1', 'int',
+                                                 'description')
+        col_2 = utils.Utils.create_column_schema('column_2', 'string',
+                                                 'description')
+        col_2.subcolumns = [{}, {}]
+        cols = [col_1, col_2]
+
+        entry_1 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols)
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.get_entry.return_value = entry_1
+
+        col_3 = utils.Utils.create_column_schema('column_2', 'string',
+                                                 'description')
+        col_3.subcolumns = [{}]
+        cols_2 = [col_1, col_3]
+
+        entry_2 = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource_1', 11, 22, cols_2)
+
+        self.__datacatalog_facade.upsert_entry('entry_group_name', 'entry_id',
+                                               entry_2)
+
+        self.assertEqual(1, datacatalog_client.get_entry.call_count)
+        datacatalog_client.create_entry.assert_not_called()
+        self.assertEqual(1, datacatalog_client.update_entry.call_count)
+        datacatalog_client.update_entry.assert_called_with(entry=entry_2,
+                                                           update_mask=None)
+
     def test_upsert_entry_should_return_original_on_failed_precondition(self):
         entry_1 = utils.Utils.create_entry_user_defined_type(
             'type', 'system', 'display_name', 'name', 'description',
