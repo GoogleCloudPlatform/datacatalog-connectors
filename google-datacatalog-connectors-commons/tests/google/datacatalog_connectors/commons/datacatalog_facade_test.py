@@ -105,7 +105,8 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_client.get_entry.call_count)
         self.assertEqual(1, datacatalog_client.create_entry.call_count)
 
-    def test_upsert_entry_nonexistent_on_failed_precondition_should_not_raise(self):
+    def test_upsert_entry_nonexistent_on_failed_precondition_should_not_raise(
+            self):
         datacatalog_client = self.__datacatalog_client
         datacatalog_client.get_entry.side_effect = \
             exceptions.PermissionDenied('Entry not found')
