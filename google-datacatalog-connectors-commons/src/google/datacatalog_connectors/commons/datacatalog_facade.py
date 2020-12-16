@@ -152,23 +152,23 @@ class DataCatalogFacade:
         columns_1 = schema_1.columns
         columns_2 = schema_2.columns
 
-        columns_are_equal = set(
+        column_names_are_equal = set(
             [column_1.column for column_1 in columns_1]) == \
             set(column_2.column for column_2 in columns_2)
 
-        # No more checks needed if columns don't match.
+        # No more checks needed if the column names don't match.
         # For example, in case a column is deleted or
         # a new column is created.
-        if not columns_are_equal:
+        if not column_names_are_equal:
             return False
 
-        for column_1 in columns_2:
-            column_to_evaluate = next((column_2 for column_2 in columns_1
+        for column_2 in columns_2:
+            column_to_evaluate = next((column_1 for column_1 in columns_1
                                        if column_2.column == column_1.column),
                                       None)
 
-            if not column_to_evaluate or not cls.__column_fields_are_equal(
-                    column_to_evaluate, column_1):
+            if not (column_to_evaluate and cls.__column_fields_are_equal(
+                    column_to_evaluate, column_2)):
                 return False
 
         return True
