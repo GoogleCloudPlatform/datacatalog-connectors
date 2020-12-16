@@ -30,6 +30,9 @@ class DataCatalogFacade:
     __STRING_TYPE = datacatalog.FieldType.PrimitiveType.STRING
     __TIMESTAMP_TYPE = datacatalog.FieldType.PrimitiveType.TIMESTAMP
 
+    # This is the value automatically set up by the GRPC client.
+    __DEFAULT_COLUMN_MODE = 'NULLABLE'
+
     def __init__(self, project_id):
         self.__datacatalog = datacatalog.DataCatalogClient()
         self.__project_id = project_id
@@ -88,7 +91,8 @@ class DataCatalogFacade:
         try:
             persisted_entry = self.get_entry(entry_name)
             self.__log_entry_operation('already exists', entry_name=entry_name)
-            if self.__entry_was_updated(persisted_entry, entry):
+            if self.__entry_was_updated(current_entry=persisted_entry,
+                                        new_entry=entry):
                 persisted_entry = self.update_entry(entry)
             else:
                 self.__log_entry_operation('is up-to-date',
@@ -106,7 +110,18 @@ class DataCatalogFacade:
         return persisted_entry
 
     @classmethod
-    def __entry_was_updated(cls, current_entry, new_entry):
+    def __entry_was_updated(cls, *, current_entry, new_entry):
+        """
+        Compares if the current_entry was updated.
+        Since the args order must be respected, this method uses
+        named args.
+
+        :param current_entry: An Entry object that is
+        synchronized in Data Catalog.
+        :param new_entry: An Entry object not yet
+        synchronized in Data Catalog.
+        """
+
         # Update time comparison allows to verify whether the entry was
         # updated on the source system.
         current_update_time = 0
@@ -123,23 +138,94 @@ class DataCatalogFacade:
             new_update_time != 0 and current_update_time != new_update_time
 
         return updated_time_changed or not cls.__entries_are_equal(
-            current_entry, new_entry)
+            current_entry=current_entry, new_entry=new_entry)
 
     @classmethod
-    def __entries_are_equal(cls, entry_1, entry_2):
+    def __entries_are_equal(cls, *, current_entry, new_entry):
+        """
+        Compares if two entries are equal.
+        Since the args order must be respected, this method uses
+        named args.
+
+        :param current_entry: An Entry object that is
+        synchronized in Data Catalog.
+        :param new_entry: An Entry object not yet
+        synchronized in Data Catalog.
+        """
         object_1 = utils.ValuesComparableObject()
-        object_1.user_specified_system = entry_1.user_specified_system
-        object_1.user_specified_type = entry_1.user_specified_type
-        object_1.display_name = entry_1.display_name
-        object_1.description = entry_1.description
-        object_1.linked_resource = entry_1.linked_resource
+        object_1.user_specified_system = current_entry.user_specified_system
+        object_1.user_specified_type = current_entry.user_specified_type
+        object_1.display_name = current_entry.display_name
+        object_1.description = current_entry.description
+        object_1.linked_resource = current_entry.linked_resource
 
         object_2 = utils.ValuesComparableObject()
-        object_2.user_specified_system = entry_2.user_specified_system
-        object_2.user_specified_type = entry_2.user_specified_type
-        object_2.display_name = entry_2.display_name
-        object_2.description = entry_2.description
-        object_2.linked_resource = entry_2.linked_resource
+        object_2.user_specified_system = new_entry.user_specified_system
+        object_2.user_specified_type = new_entry.user_specified_type
+        object_2.display_name = new_entry.display_name
+        object_2.description = new_entry.description
+        object_2.linked_resource = new_entry.linked_resource
+
+        return object_1 == object_2 and cls.__schemas_are_equal(
+            current_schema=current_entry.schema, new_schema=new_entry.schema)
+
+    @classmethod
+    def __schemas_are_equal(cls, *, current_schema, new_schema):
+        current_columns = current_schema.columns
+        new_columns = new_schema.columns
+
+        columns_are_equal = set([c_1.column for c_1 in current_columns]) == \
+            set(c_2.column for c_2 in new_columns)
+
+        # If columns don't match return early for optimization
+        # for example in case a column is deleted or
+        # a new column is created.
+        if not columns_are_equal:
+            return False
+
+        for new_column in new_columns:
+            found_column = next((current_column for current_column in current_columns if
+                                 current_column.column == new_column.column), None)
+
+            if not found_column:
+                return False
+
+            if not cls.__columns_fields_are_equal(found_column, new_column):
+                return False
+
+        return True
+
+    @classmethod
+    def __columns_fields_are_equal(cls, current_column, new_column):
+        object_1 = utils.ValuesComparableObject()
+        object_1.column = current_column.column
+        object_1.description = current_column.description
+        object_1.type = current_column.type
+
+        # If it is not fulfilled We need to initialize with the default MODE.
+        if not current_column.mode:
+            current_column.mode = cls.__DEFAULT_COLUMN_MODE
+
+        object_1.mode = current_column.mode
+
+        # Currently we only look at the subcolumns length
+        # connectors do not utilize this field at the moment.
+        object_1.subcolumns_len = len(current_column.subcolumns)
+
+        object_2 = utils.ValuesComparableObject()
+        object_2.column = new_column.column
+        object_2.description = new_column.description
+        object_2.type = new_column.type
+
+        # If it is not fulfilled We need to initialize with the default MODE.
+        if not new_column.mode:
+            new_column.mode = cls.__DEFAULT_COLUMN_MODE
+
+        object_2.mode = new_column.mode
+
+        # Currently we only look at the subcolumns length
+        # connectors do not utilize this field at the moment.
+        object_2.subcolumns_len = len(new_column.subcolumns)
 
         return object_1 == object_2
 
