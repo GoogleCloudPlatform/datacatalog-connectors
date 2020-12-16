@@ -91,8 +91,7 @@ class DataCatalogFacade:
         try:
             persisted_entry = self.get_entry(entry_name)
             self.__log_entry_operation('already exists', entry_name=entry_name)
-            if self.__entry_was_updated(current_entry=persisted_entry,
-                                        new_entry=entry):
+            if self.__entry_was_updated(persisted_entry, entry):
                 persisted_entry = self.update_entry(entry)
             else:
                 self.__log_entry_operation('is up-to-date',
@@ -110,18 +109,7 @@ class DataCatalogFacade:
         return persisted_entry
 
     @classmethod
-    def __entry_was_updated(cls, *, current_entry, new_entry):
-        """
-        Compares if the current_entry was updated.
-        Since the args order must be respected, this method uses
-        named args.
-
-        :param current_entry: An Entry object that is
-        synchronized in Data Catalog.
-        :param new_entry: An Entry object not yet
-        synchronized in Data Catalog.
-        """
-
+    def __entry_was_updated(cls, current_entry, new_entry):
         # Update time comparison allows to verify whether the entry was
         # updated on the source system.
         current_update_time = 0
@@ -138,20 +126,10 @@ class DataCatalogFacade:
             new_update_time != 0 and current_update_time != new_update_time
 
         return updated_time_changed or not cls.__entries_are_equal(
-            current_entry=current_entry, new_entry=new_entry)
+            current_entry, new_entry)
 
     @classmethod
-    def __entries_are_equal(cls, *, current_entry, new_entry):
-        """
-        Compares if two entries are equal.
-        Since the args order must be respected, this method uses
-        named args.
-
-        :param current_entry: An Entry object that is
-        synchronized in Data Catalog.
-        :param new_entry: An Entry object not yet
-        synchronized in Data Catalog.
-        """
+    def __entries_are_equal(cls, current_entry, new_entry):
         object_1 = utils.ValuesComparableObject()
         object_1.user_specified_system = current_entry.user_specified_system
         object_1.user_specified_type = current_entry.user_specified_type
@@ -167,15 +145,16 @@ class DataCatalogFacade:
         object_2.linked_resource = new_entry.linked_resource
 
         return object_1 == object_2 and cls.__schemas_are_equal(
-            current_schema=current_entry.schema, new_schema=new_entry.schema)
+            current_entry.schema, new_entry.schema)
 
     @classmethod
-    def __schemas_are_equal(cls, *, current_schema, new_schema):
+    def __schemas_are_equal(cls, current_schema, new_schema):
         current_columns = current_schema.columns
         new_columns = new_schema.columns
 
-        columns_are_equal = set([c_1.column for c_1 in current_columns]) == \
-            set(c_2.column for c_2 in new_columns)
+        columns_are_equal = set(
+            [current_column.column for current_column in current_columns]) == \
+            set(new_column.column for new_column in new_columns)
 
         # If columns don't match return early for optimization
         # for example in case a column is deleted or
@@ -203,7 +182,7 @@ class DataCatalogFacade:
         object_1.description = current_column.description
         object_1.type = current_column.type
 
-        # If it is not fulfilled We need to initialize with the default MODE.
+        # If it is not fulfilled we need to initialize with the default MODE.
         if not current_column.mode:
             current_column.mode = cls.__DEFAULT_COLUMN_MODE
 
@@ -218,7 +197,7 @@ class DataCatalogFacade:
         object_2.description = new_column.description
         object_2.type = new_column.type
 
-        # If it is not fulfilled We need to initialize with the default MODE.
+        # If it is not fulfilled we need to initialize with the default MODE.
         if not new_column.mode:
             new_column.mode = cls.__DEFAULT_COLUMN_MODE
 
