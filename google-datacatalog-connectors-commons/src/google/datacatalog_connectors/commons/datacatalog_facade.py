@@ -52,6 +52,11 @@ class DataCatalogFacade:
             self.__log_entry_operation('was not created',
                                        entry_name=entry_name)
             logging.warning('Error: %s', e)
+        except exceptions.FailedPrecondition as e:
+            entry_name = '{}/entries/{}'.format(entry_group_name, entry_id)
+            self.__log_entry_operation('was not created',
+                                       entry_name=entry_name)
+            logging.warning('Error: %s', e)
 
         return entry
 
