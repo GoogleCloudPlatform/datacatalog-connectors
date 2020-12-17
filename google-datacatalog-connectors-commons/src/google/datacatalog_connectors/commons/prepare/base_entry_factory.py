@@ -22,14 +22,14 @@ import unicodedata
 
 class BaseEntryFactory:
     __ASCII_CHARACTER_ENCODING = 'ASCII'
+    __DEFAULT_ENTRY_ID_HASH_LENGTH = 8
+    __DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN = r'[^a-zA-Z0-9]+'
     __ID_MAX_LENGTH = 64
-    __ENTRY_ID_INVALID_CHARS_REGEX_PATTERN = r'[^a-zA-Z0-9]+'
-    __ENTRY_ID_HASH_LENGTH = 8
 
     @classmethod
     def _format_id(cls, source_id):
         formatted_id = cls.__normalize_string(
-            cls.__ENTRY_ID_INVALID_CHARS_REGEX_PATTERN, source_id)
+            cls.__DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN, source_id)
 
         return formatted_id[:cls.__ID_MAX_LENGTH] if \
             len(formatted_id) > cls.__ID_MAX_LENGTH else formatted_id
@@ -38,12 +38,12 @@ class BaseEntryFactory:
     def _format_id_with_hashing(
             cls,
             source_id,
-            regex_pattern=__ENTRY_ID_INVALID_CHARS_REGEX_PATTERN,
-            hash_length=__ENTRY_ID_HASH_LENGTH):
+            regex_pattern=__DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN,
+            hash_length=__DEFAULT_ENTRY_ID_HASH_LENGTH):
         """
-        Formats the source_id using the regex_pattern, and applies
-        a hashing strategy in the provided hash_length of the source_id to
-        generate a best effort unique ID.
+        Normalizes the source_id using the regex_pattern, and optionally
+        applies a hashing strategy (considering the provided hash_length)
+        over the source_id to generate a unique ID on a best-effort basis.
 
         :param source_id: value to be formatted.
         :param regex_pattern: pattern used to replace invalid characters.
