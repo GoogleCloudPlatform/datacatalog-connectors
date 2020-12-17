@@ -42,7 +42,7 @@ class BaseEntryFactory:
         hash.update(formatted_id.encode(cls.__ASCII_CHARACTER_ENCODING))
 
         return formatted_id[:cls.__ID_MAX_LENGTH - hash_length] + \
-               hash.hexdigest()[:hash_length]
+            hash.hexdigest()[:hash_length]
 
     @classmethod
     def _format_display_name(cls, source_name):
