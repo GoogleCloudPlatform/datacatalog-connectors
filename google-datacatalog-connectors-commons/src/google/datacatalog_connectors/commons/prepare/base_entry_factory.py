@@ -16,8 +16,8 @@
 
 import hashlib
 import re
-import unicodedata
 import six
+import unicodedata
 
 
 class BaseEntryFactory:
@@ -26,16 +26,14 @@ class BaseEntryFactory:
 
     @classmethod
     def _format_id(cls, source_id):
-        formatted_id = cls.__format_and_normalize_str(r'[^a-zA-Z0-9]+',
-                                                      source_id)
+        formatted_id = cls.__normalize_string(r'[^a-zA-Z0-9]+', source_id)
 
         return formatted_id[:cls.__ID_MAX_LENGTH] if \
             len(formatted_id) > cls.__ID_MAX_LENGTH else formatted_id
 
     @classmethod
-    def _format_id_with_hashing(cls, source_id, length_to_hash):
-        formatted_id = cls.__format_and_normalize_str(r'[^a-zA-Z0-9]+',
-                                                      source_id)
+    def _format_id_with_hashing(cls, source_id, hash_length):
+        formatted_id = cls.__normalize_string(r'[^a-zA-Z0-9]+', source_id)
 
         if len(formatted_id) <= cls.__ID_MAX_LENGTH:
             return formatted_id
@@ -43,18 +41,18 @@ class BaseEntryFactory:
         hash = hashlib.sha1()
         hash.update(formatted_id.encode(cls.__ASCII_CHARACTER_ENCODING))
 
-        return formatted_id[:cls.__ID_MAX_LENGTH-length_to_hash] + \
-            hash.hexdigest()[:length_to_hash]
+        return formatted_id[:cls.__ID_MAX_LENGTH - hash_length] + \
+               hash.hexdigest()[:hash_length]
 
     @classmethod
     def _format_display_name(cls, source_name):
-        return cls.__format_and_normalize_str(r'[^a-zA-Z0-9_\- ]+',
-                                              source_name)
+        return cls.__normalize_string(r'[^\w\- ]+', source_name)
 
     @classmethod
-    def __format_and_normalize_str(cls, regex_pattern, source_str):
-        formatted_str = re.sub(regex_pattern, '_',
-                               cls.__normalize_ascii_chars(source_str.strip()))
+    def __normalize_string(cls, regex_pattern, source_string):
+        formatted_str = re.sub(
+            regex_pattern, '_',
+            cls.__normalize_ascii_chars(source_string.strip()))
         return formatted_str
 
     @classmethod
