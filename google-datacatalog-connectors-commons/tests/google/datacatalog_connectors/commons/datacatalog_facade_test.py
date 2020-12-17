@@ -105,6 +105,26 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_client.get_entry.call_count)
         self.assertEqual(1, datacatalog_client.create_entry.call_count)
 
+    def test_upsert_entry_nonexistent_on_failed_precondition_should_not_raise(
+            self):
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.get_entry.side_effect = \
+            exceptions.PermissionDenied('Entry not found')
+
+        datacatalog_client.create_entry.side_effect = \
+            exceptions.FailedPrecondition('Failed precondition')
+
+        entry = utils.Utils.create_entry_user_defined_type(
+            'type', 'system', 'display_name', 'name', 'description',
+            'linked_resource', 11, 22)
+
+        self.__datacatalog_facade.upsert_entry('entry_group_name', 'entry_id',
+                                               entry)
+
+        self.assertEqual(1, datacatalog_client.get_entry.call_count)
+        self.assertEqual(1, datacatalog_client.create_entry.call_count)
+
     def test_upsert_entry_changed_should_update(self):
         entry_1 = utils.Utils.create_entry_user_defined_type(
             'type', 'system', 'display_name', 'name', 'description',
