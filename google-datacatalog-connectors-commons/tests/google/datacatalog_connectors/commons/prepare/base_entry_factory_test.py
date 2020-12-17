@@ -34,7 +34,19 @@ class BaseEntryFactoryTestCase(unittest.TestCase):
                        'business_7074c286'
 
         formatted_id = prepare.BaseEntryFactory._format_id_with_hashing(
-            long_str, 8)
+            long_str, hash_length=8)
+        self.assertEqual(expected_str, formatted_id)
+
+    def test_format_id_with_provided_pattern_should_normalize_non_compliant_id(  # noqa: E501
+            self):
+        long_str = 'organization__warehouse7192ecb2__personsc3a8d512_' \
+                   'business_area_and_segment_of_marketing'
+
+        expected_str = 'organization__warehouse7192ecb2_' \
+                       '_personsc3a8d512_businesa4f7e655'
+
+        formatted_id = prepare.BaseEntryFactory._format_id_with_hashing(
+            long_str, regex_pattern=r'[^a-zA-Z0-9_]+')
         self.assertEqual(expected_str, formatted_id)
 
     def test_format_display_name_should_normalize_non_compliant_name(self):
