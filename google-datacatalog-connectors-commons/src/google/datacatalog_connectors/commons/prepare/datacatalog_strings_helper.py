@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.cloud import datacatalog
 import six
 
 
@@ -25,7 +24,7 @@ class DataCatalogStringsHelper:
     __SUFFIX_CHARS_LENGTH = 3
 
     @classmethod
-    def truncate_string(cls, source_stringd, value):
+    def truncate_string(cls, value, max_length=__STRING_VALUE_UTF8_MAX_LENGTH):
         """
         String field values are limited by Data Catalog API at 2000 chars
         length when encoded in UTF-8. UTF-8 chars may need from 1 to 4 bytes
@@ -48,11 +47,10 @@ class DataCatalogStringsHelper:
         result string so users will know it's different from the original
         value.
         """
-        if not (value and isinstance(value, six.string_types)):
+        if not (value is not None and isinstance(value, six.string_types)):
             return
 
         encoding = cls.__UTF8_CHARACTER_ENCODING
-        max_length = cls.__STRING_VALUE_UTF8_MAX_LENGTH
         suffix_length = cls.__SUFFIX_CHARS_LENGTH
 
         encoded = value.encode(encoding)
@@ -68,6 +66,4 @@ class DataCatalogStringsHelper:
                 'ignore')) if len(encoded) > max_length else encoded.decode(
                     encoding, 'ignore')
 
-        string_field = datacatalog.TagField()
-        string_field.string_value = decoded
-        tag.fields[field_id] = string_field
+        return decoded

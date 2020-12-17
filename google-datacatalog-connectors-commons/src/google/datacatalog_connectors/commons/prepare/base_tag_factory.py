@@ -18,6 +18,8 @@ from google.cloud import datacatalog
 from google.protobuf import timestamp_pb2
 import six
 
+from google.datacatalog_connectors.commons import prepare
+
 
 class BaseTagFactory:
     __UTF8_CHARACTER_ENCODING = 'UTF-8'
@@ -41,50 +43,15 @@ class BaseTagFactory:
 
     @classmethod
     def _set_string_field(cls, tag, field_id, value):
-        """
-        String field values are limited by Data Catalog API at 2000 chars
-        length when encoded in UTF-8. UTF-8 chars may need from 1 to 4 bytes
-        (https://en.wikipedia.org/wiki/UTF-8 for details):
-        - the first 128 characters (US-ASCII) need one byte;
-        - the next 1,920 characters need two bytes to encode, which covers the
-          remainder of almost all Latin-script alphabets, and also Greek,
-          Cyrillic, Coptic, Armenian, Hebrew, Arabic, Syriac, Thaana and N'Ko
-          alphabets, as well as Combining Diacritical Marks;
-        - three bytes are needed for characters in the rest of the Basic
-          Multilingual Plane, which contains virtually all characters in common
-          use, including most Chinese, Japanese and Korean characters;
-        - four bytes are needed for characters in the other planes of Unicode,
-          which include less common CJK characters, various historic scripts,
-          mathematical symbols, and emoji (pictographic symbols).
-
-        Given a value and a string Tag Field, this method assigns the field the
-        value. Before assigning it checks the value's UTF-8 byte-size and
-        truncates if needed. When it happens, 3 periods are appended to the
-        result string so users will know it's different from the original
-        value.
-        """
         if not (value and isinstance(value, six.string_types)):
             return
 
-        encoding = cls.__UTF8_CHARACTER_ENCODING
-        max_length = cls.__STRING_VALUE_UTF8_MAX_LENGTH
-        suffix_length = cls.__SUFFIX_CHARS_LENGTH
-
-        encoded = value.encode(encoding)
-
-        # the max length supported is stored at max_length
-        # we leave some chars as the suffix_length to be used when
-        # creating the new string, so this line truncates the existing string.
-        truncated_string_field = encoded[:max_length - suffix_length]
-
-        decoded = u'{}...'.format(
-            truncated_string_field.decode(
-                encoding,
-                'ignore')) if len(encoded) > max_length else encoded.decode(
-                    encoding, 'ignore')
+        truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
+            value)
 
         string_field = datacatalog.TagField()
-        string_field.string_value = decoded
+        string_field.string_value = truncated_string
+
         tag.fields[field_id] = string_field
 
     @classmethod

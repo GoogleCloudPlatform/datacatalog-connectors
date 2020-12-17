@@ -18,13 +18,16 @@
 import calendar
 import unittest
 
-from google.datacatalog_connectors.commons import prepare
 import dateutil.parser
-
+import mock
 from google.cloud import datacatalog
+
+from google.datacatalog_connectors.commons import prepare
 
 
 class BaseTagFactoryTestCase(unittest.TestCase):
+    __COMMONS_PACKAGE = 'google.datacatalog_connectors.commons'
+    __PREPARE_PACKAGE = '{}.prepare'.format(__COMMONS_PACKAGE)
 
     def test_set_bool_field_should_skip_none_value(self):
         tag = datacatalog.Tag()
@@ -56,85 +59,40 @@ class BaseTagFactoryTestCase(unittest.TestCase):
 
         self.assertEqual(0, tag.fields['double'].double_value)
 
-    def test_set_string_field_should_skip_none_value(self):
+    @mock.patch(
+        '{}.DataCatalogStringsHelper.truncate_string'.format(__PREPARE_PACKAGE)
+    )
+    def test_set_string_field_should_skip_none_value(self,
+                                                     mock_truncate_string):
         tag = datacatalog.Tag()
         prepare.BaseTagFactory._set_string_field(tag, 'string', None)
 
         self.assertNotIn('string', tag.fields)
+        mock_truncate_string.assert_not_called()
 
-    def test_set_string_field_should_skip_empty_value(self):
+    @mock.patch(
+        '{}.DataCatalogStringsHelper.truncate_string'.format(__PREPARE_PACKAGE)
+    )
+    def test_set_string_field_should_skip_empty_value(self,
+                                                      mock_truncate_string):
         tag = datacatalog.Tag()
         prepare.BaseTagFactory._set_string_field(tag, 'string', '')
 
         self.assertNotIn('string', tag.fields)
+        mock_truncate_string.assert_not_called()
 
-    def test_set_string_field_should_truncate_uft8_bytes_size(self):
-        """
-         - Input string: 2001 'a' chars;
-         - Expected field value: '1997 "a" chars + ...' since each char needs
-         1 byte when encoded in UTF-8.
-        """
+    @mock.patch(
+        '{}.DataCatalogStringsHelper.truncate_string'.format(__PREPARE_PACKAGE)
+    )
+    def test_set_string_field_should_set_given_value(self,
+                                                     mock_truncate_string):
+        expected_value = '{}...'.format('a' * 1997)
+        mock_truncate_string.return_value = expected_value
 
         tag = datacatalog.Tag()
         prepare.BaseTagFactory._set_string_field(tag, 'string', 'a' * 2001)
 
-        self.assertEqual(2000, len(tag.fields['string'].string_value))
-        self.assertEqual('{}...'.format('a' * 1997),
-                         tag.fields['string'].string_value)
-        self.assertEqual(
-            2000, len(tag.fields['string'].string_value.encode('UTF-8')))
-
-    def test_set_string_field_should_truncate_uft8_bytes_size_i18n(self):
-        """
-         - Input string: 1010 'ã' chars;
-         - Expected field value: '998 "ã" chars + ...' since each 'ã' char
-         needs 2 bytes and periods need 1 byte when encoded in UTF-8.
-        """
-
-        tag = datacatalog.Tag()
-        str_value = u''
-        for _ in range(1010):
-            str_value += u'ã'
-
-        prepare.BaseTagFactory._set_string_field(tag, 'string', str_value)
-
-        self.assertEqual(1001, len(tag.fields['string'].string_value))
-
-        str_value = u''
-        for _ in range(998):
-            str_value += u'ã'
-
-        self.assertEqual(u'{}...'.format(str_value),
-                         tag.fields['string'].string_value)
-        self.assertEqual(
-            1999, len(tag.fields['string'].string_value.encode('UTF-8')))
-
-    def test_set_string_field_should_truncate_uft8_bytes_size_mixed(self):
-        """
-         - Input string: 1990 'a' chars + 10 'ã' chars;
-         - Expected field value: '1990 "a" chars + 3 "ã" chars + ...' since
-         each 'ã' char needs 2 bytes, 'a' chars and periods need 1 byte when
-         encoded in UTF-8.
-        """
-
-        tag = datacatalog.Tag()
-
-        str_value = u''
-        for _ in range(10):
-            str_value += u'ã'
-
-        prepare.BaseTagFactory._set_string_field(
-            tag, 'string', u'{}{}'.format('a' * 1990, str_value))
-
-        str_value = u''
-        for _ in range(3):
-            str_value += u'ã'
-
-        self.assertEqual(1996, len(tag.fields['string'].string_value))
-        self.assertEqual(u'{}{}...'.format('a' * 1990, str_value),
-                         tag.fields['string'].string_value)
-        self.assertEqual(
-            1999, len(tag.fields['string'].string_value.encode('UTF-8')))
+        self.assertEqual(expected_value, tag.fields['string'].string_value)
 
     def test_set_timestamp_field_should_skip_none_value(self):
         tag = datacatalog.Tag()
