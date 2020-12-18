@@ -102,6 +102,26 @@ class BaseEntryFactoryTestCase(unittest.TestCase):
     @mock.patch(
         '{}.DataCatalogStringsHelper.truncate_string'.format(__PREPARE_PACKAGE)
     )
+    def test_format_linked_resource_should_not_normalize_non_compliant_string(
+            self, mock_truncate_string):
+        # Return same value received.
+        mock_truncate_string.side_effect = (lambda *args: args[0])
+
+        formatted_linked_resource = prepare.BaseEntryFactory. \
+            _format_linked_resource(
+                'hdfs://[namenode]:8020/user/{hive}/[warehouse]/table_company'
+                '_names_from_?department?_that_;keeps;_records_with_'
+                'historical_data_from_every_single_member', False)
+
+        self.assertEqual(
+            'hdfs://[namenode]:8020/user/{hive}/[warehouse]/table_company'
+            '_names_from_?department?_that_;keeps;_records_with_'
+            'historical_data_from_every_single_member',
+            formatted_linked_resource)
+
+    @mock.patch(
+        '{}.DataCatalogStringsHelper.truncate_string'.format(__PREPARE_PACKAGE)
+    )
     def test_format_linked_resource_should_truncate_non_compliant_string(
             self, mock_truncate_string):
         expected_value = 'truncated_str...'
