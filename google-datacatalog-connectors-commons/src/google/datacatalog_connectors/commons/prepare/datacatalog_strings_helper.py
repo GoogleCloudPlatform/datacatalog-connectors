@@ -18,13 +18,12 @@ import six
 
 
 class DataCatalogStringsHelper:
-    __UTF8_CHARACTER_ENCODING = 'UTF-8'
     # String field values are limited to 2000 bytes size when encoded in UTF-8.
-    __STRING_VALUE_UTF8_MAX_LENGTH = 2000
-    __SUFFIX_CHARS_LENGTH = 3
+    __TRUNCATED_STRING_SUFFIX_CHARS_LENGTH = 3
+    __UTF8_CHARACTER_ENCODING = 'UTF-8'
 
     @classmethod
-    def truncate_string(cls, value, max_length=__STRING_VALUE_UTF8_MAX_LENGTH):
+    def truncate_string(cls, value, max_length):
         """
         String field values are limited by Data Catalog API at 2000 chars
         length when encoded in UTF-8. UTF-8 chars may need from 1 to 4 bytes
@@ -41,8 +40,7 @@ class DataCatalogStringsHelper:
           which include less common CJK characters, various historic scripts,
           mathematical symbols, and emoji (pictographic symbols).
 
-        Given a value and a string Tag Field, this method assigns the field the
-        value. Before assigning it checks the value's UTF-8 byte-size and
+        Given a string, this method checks the value's UTF-8 byte-size and
         truncates if needed. When it happens, 3 periods are appended to the
         result string so users will know it's different from the original
         value.
@@ -51,19 +49,18 @@ class DataCatalogStringsHelper:
             return
 
         encoding = cls.__UTF8_CHARACTER_ENCODING
-        suffix_length = cls.__SUFFIX_CHARS_LENGTH
+        suffix_length = cls.__TRUNCATED_STRING_SUFFIX_CHARS_LENGTH
 
         encoded = value.encode(encoding)
 
-        # the max length supported is stored at max_length
-        # we leave some chars as the suffix_length to be used when
+        # The max length supported is stored at max_length.
+        # We leave some chars as the suffix_length to be used when
         # creating the new string, so this line truncates the existing string.
         truncated_string_field = encoded[:max_length - suffix_length]
 
         decoded = u'{}...'.format(
-            truncated_string_field.decode(
-                encoding,
-                'ignore')) if len(encoded) > max_length else encoded.decode(
-                    encoding, 'ignore')
+            truncated_string_field.decode(encoding, 'ignore')) \
+            if len(encoded) > max_length \
+            else encoded.decode(encoding, 'ignore')
 
         return decoded

@@ -21,15 +21,17 @@ from google.datacatalog_connectors.commons import prepare
 
 
 class DataCatalogStringsHelperTestCase(unittest.TestCase):
+    __STRING_VALUE_UTF8_MAX_LENGTH = 2000
 
     def test_truncate_string_should_skip_none_value(self):
         truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
-            None)
+            None, self.__STRING_VALUE_UTF8_MAX_LENGTH)
 
         self.assertEqual(None, truncated_string)
 
     def test_truncate_string_should_return_empty_value(self):
-        truncated_string = prepare.DataCatalogStringsHelper.truncate_string('')
+        truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
+            '', self.__STRING_VALUE_UTF8_MAX_LENGTH)
 
         self.assertEqual('', truncated_string)
 
@@ -47,7 +49,7 @@ class DataCatalogStringsHelperTestCase(unittest.TestCase):
         """
 
         truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
-            'a' * 2001)
+            'a' * 2001, self.__STRING_VALUE_UTF8_MAX_LENGTH)
         self.assertEqual(2000, len(truncated_string))
         self.assertEqual('{}...'.format('a' * 1997), truncated_string)
         self.assertEqual(2000, len(truncated_string.encode('UTF-8')))
@@ -64,7 +66,7 @@ class DataCatalogStringsHelperTestCase(unittest.TestCase):
             str_value += u'ã'
 
         truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
-            str_value)
+            str_value, self.__STRING_VALUE_UTF8_MAX_LENGTH)
 
         self.assertEqual(1001, len(truncated_string))
 
@@ -88,7 +90,8 @@ class DataCatalogStringsHelperTestCase(unittest.TestCase):
             str_value += u'ã'
 
         truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
-            u'{}{}'.format('a' * 1990, str_value))
+            u'{}{}'.format('a' * 1990, str_value),
+            self.__STRING_VALUE_UTF8_MAX_LENGTH)
 
         str_value = u''
         for _ in range(3):

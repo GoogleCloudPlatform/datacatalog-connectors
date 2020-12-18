@@ -22,10 +22,7 @@ from google.datacatalog_connectors.commons import prepare
 
 
 class BaseTagFactory:
-    __UTF8_CHARACTER_ENCODING = 'UTF-8'
-    # String field values are limited to 2000 bytes size when encoded in UTF-8.
     __STRING_VALUE_UTF8_MAX_LENGTH = 2000
-    __SUFFIX_CHARS_LENGTH = 3
 
     @classmethod
     def _set_bool_field(cls, tag, field_id, value):
@@ -47,7 +44,7 @@ class BaseTagFactory:
             return
 
         truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
-            value)
+            value, cls.__STRING_VALUE_UTF8_MAX_LENGTH)
 
         string_field = datacatalog.TagField()
         string_field.string_value = truncated_string

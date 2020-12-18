@@ -18,9 +18,9 @@
 import calendar
 import unittest
 
-import dateutil.parser
-import mock
+from dateutil import parser
 from google.cloud import datacatalog
+import mock
 
 from google.datacatalog_connectors.commons import prepare
 
@@ -105,9 +105,9 @@ class BaseTagFactoryTestCase(unittest.TestCase):
         tag = datacatalog.Tag()
         prepare.BaseTagFactory._set_timestamp_field(
             tag, 'timestamp-field',
-            dateutil.parser.isoparse('2019-09-12T16:30:00+0000'))
+            parser.isoparse('2019-09-12T16:30:00+0000'))
 
-        date = dateutil.parser.isoparse('2019-09-12T16:30:00+0000')
+        date = parser.isoparse('2019-09-12T16:30:00+0000')
         self.assertEqual(
             int(calendar.timegm(date.utctimetuple())),
             tag.fields['timestamp-field'].timestamp_value.timestamp())
