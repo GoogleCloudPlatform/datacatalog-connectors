@@ -18,15 +18,18 @@ import six
 
 
 class DataCatalogStringsHelper:
-    # String field values are limited to 2000 bytes size when encoded in UTF-8.
     __TRUNCATED_STRING_SUFFIX_CHARS_LENGTH = 3
     __UTF8_CHARACTER_ENCODING = 'UTF-8'
 
     @classmethod
-    def truncate_string(cls, value, max_length):
+    def truncate_string(cls, string, max_length):
         """
-        String field values are limited by Data Catalog API at 2000 chars
-        length when encoded in UTF-8. UTF-8 chars may need from 1 to 4 bytes
+        Given a string, this method checks its UTF-8 byte-size and
+        truncates if needed. When it happens, 3 periods are appended to the
+        result string so users will know it's different from the original
+        value.
+
+        UTF-8 chars may need from 1 to 4 bytes
         (https://en.wikipedia.org/wiki/UTF-8 for details):
         - the first 128 characters (US-ASCII) need one byte;
         - the next 1,920 characters need two bytes to encode, which covers the
@@ -39,19 +42,14 @@ class DataCatalogStringsHelper:
         - four bytes are needed for characters in the other planes of Unicode,
           which include less common CJK characters, various historic scripts,
           mathematical symbols, and emoji (pictographic symbols).
-
-        Given a string, this method checks the value's UTF-8 byte-size and
-        truncates if needed. When it happens, 3 periods are appended to the
-        result string so users will know it's different from the original
-        value.
         """
-        if not (value is not None and isinstance(value, six.string_types)):
+        if not (string is not None and isinstance(string, six.string_types)):
             return
 
         encoding = cls.__UTF8_CHARACTER_ENCODING
         suffix_length = cls.__TRUNCATED_STRING_SUFFIX_CHARS_LENGTH
 
-        encoded = value.encode(encoding)
+        encoded = string.encode(encoding)
 
         # The max length supported is stored at max_length.
         # We leave some chars as the suffix_length to be used when

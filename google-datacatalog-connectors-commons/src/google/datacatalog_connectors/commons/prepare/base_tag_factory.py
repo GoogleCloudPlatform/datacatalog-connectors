@@ -40,6 +40,12 @@ class BaseTagFactory:
 
     @classmethod
     def _set_string_field(cls, tag, field_id, value):
+        """
+        String field values are limited by Data Catalog API at 2000 chars
+        length when encoded in UTF-8. Given a string Tag Field and its
+        value, this method assigns the value to the field, truncating if needed.
+        """
+
         if not (value and isinstance(value, six.string_types)):
             return
 

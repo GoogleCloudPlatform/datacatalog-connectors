@@ -61,20 +61,20 @@ class DataCatalogStringsHelperTestCase(unittest.TestCase):
          needs 2 bytes and periods need 1 byte when encoded in UTF-8.
         """
 
-        str_value = u''
+        string = u''
         for _ in range(1010):
-            str_value += u'ã'
+            string += u'ã'
 
         truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
-            str_value, self.__STRING_VALUE_UTF8_MAX_LENGTH)
+            string, self.__STRING_VALUE_UTF8_MAX_LENGTH)
 
         self.assertEqual(1001, len(truncated_string))
 
-        str_value = u''
+        string = u''
         for _ in range(998):
-            str_value += u'ã'
+            string += u'ã'
 
-        self.assertEqual(u'{}...'.format(str_value), truncated_string)
+        self.assertEqual(u'{}...'.format(string), truncated_string)
         self.assertEqual(1999, len(truncated_string.encode('UTF-8')))
 
     def test_truncate_string_should_truncate_uft8_bytes_size_mixed(self):
@@ -85,19 +85,19 @@ class DataCatalogStringsHelperTestCase(unittest.TestCase):
          encoded in UTF-8.
         """
 
-        str_value = u''
+        string = u''
         for _ in range(10):
-            str_value += u'ã'
+            string += u'ã'
 
         truncated_string = prepare.DataCatalogStringsHelper.truncate_string(
-            u'{}{}'.format('a' * 1990, str_value),
+            u'{}{}'.format('a' * 1990, string),
             self.__STRING_VALUE_UTF8_MAX_LENGTH)
 
-        str_value = u''
+        string = u''
         for _ in range(3):
-            str_value += u'ã'
+            string += u'ã'
 
         self.assertEqual(1996, len(truncated_string))
-        self.assertEqual(u'{}{}...'.format('a' * 1990, str_value),
+        self.assertEqual(u'{}{}...'.format('a' * 1990, string),
                          truncated_string)
         self.assertEqual(1999, len(truncated_string.encode('UTF-8')))
