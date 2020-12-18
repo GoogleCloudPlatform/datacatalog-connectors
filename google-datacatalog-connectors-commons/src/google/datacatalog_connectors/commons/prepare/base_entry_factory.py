@@ -24,10 +24,24 @@ class BaseEntryFactory:
     __ASCII_CHARACTER_ENCODING = 'ASCII'
     __DEFAULT_ENTRY_ID_HASH_LENGTH = 8
     __DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN = r'[^a-zA-Z0-9]+'
+
+    # Linked_resource must contain only letters, numbers, periods, colons,
+    # slashes, underscores, dashes and hashes.
+    __DEFAULT_LINKED_RESOURCE_INVALID_CHARS_REGEX_PATTERN = \
+        r'[^\w\.,\\\/\-#]+'
     __ID_MAX_LENGTH = 64
+    __LINKED_RESOURCE_UTF8_MAX_LENGTH = 200
 
     @classmethod
     def _format_id(cls, source_id):
+        formatted_id = cls.__normalize_string(
+            cls.__DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN, source_id)
+
+        return formatted_id[:cls.__ID_MAX_LENGTH] if \
+            len(formatted_id) > cls.__ID_MAX_LENGTH else formatted_id
+
+    @classmethod
+    def _format_linked_resource(cls, linked_resource):
         formatted_id = cls.__normalize_string(
             cls.__DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN, source_id)
 
