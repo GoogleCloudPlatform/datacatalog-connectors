@@ -19,17 +19,18 @@ import re
 import six
 import unicodedata
 
+from google.datacatalog_connectors.commons import prepare
+
 
 class BaseEntryFactory:
     __ASCII_CHARACTER_ENCODING = 'ASCII'
     __DEFAULT_ENTRY_ID_HASH_LENGTH = 8
     __DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN = r'[^a-zA-Z0-9]+'
+    __ID_MAX_LENGTH = 64
 
     # Linked_resource must contain only letters, numbers, periods, colons,
     # slashes, underscores, dashes and hashes.
-    __DEFAULT_LINKED_RESOURCE_INVALID_CHARS_REGEX_PATTERN = \
-        r'[^\w\.,\\\/\-#]+'
-    __ID_MAX_LENGTH = 64
+    __LINKED_RESOURCE_INVALID_CHARS_REGEX_PATTERN = r'[^\w\.,\\\/\-#:]+'
     __LINKED_RESOURCE_UTF8_MAX_LENGTH = 200
 
     @classmethod
@@ -42,11 +43,11 @@ class BaseEntryFactory:
 
     @classmethod
     def _format_linked_resource(cls, linked_resource):
-        formatted_id = cls.__normalize_string(
-            cls.__DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN, source_id)
+        formatted_linked_resource = cls.__normalize_string(
+            cls.__LINKED_RESOURCE_INVALID_CHARS_REGEX_PATTERN, linked_resource)
 
-        return formatted_id[:cls.__ID_MAX_LENGTH] if \
-            len(formatted_id) > cls.__ID_MAX_LENGTH else formatted_id
+        return prepare.DataCatalogStringsHelper.truncate_string(
+            formatted_linked_resource, cls.__LINKED_RESOURCE_UTF8_MAX_LENGTH)
 
     @classmethod
     def _format_id_with_hashing(
