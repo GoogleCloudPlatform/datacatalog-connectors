@@ -58,8 +58,14 @@ class BaseEntryFactoryTestCase(unittest.TestCase):
             u'ã123 :?: b456  ')
         self.assertEqual('a123 _ b456', formatted_name)
 
+    @mock.patch(
+        '{}.DataCatalogStringsHelper.truncate_string'.format(__PREPARE_PACKAGE)
+    )
     def test_format_linked_resource_should_not_normalize_compliant_string(
-            self):  # noqa: E501
+            self, mock_truncate_string):
+        # Return same value received.
+        mock_truncate_string.side_effect = (lambda *args: args[0])
+
         formatted_linked_resource = prepare.BaseEntryFactory.\
             _format_linked_resource(
                 'hdfs://namenode:8020/user/hive/warehouse/table_company'
@@ -77,7 +83,6 @@ class BaseEntryFactoryTestCase(unittest.TestCase):
     )
     def test_format_linked_resource_should_normalize_non_compliant_string(
             self, mock_truncate_string):
-
         # Return same value received.
         mock_truncate_string.side_effect = (lambda *args: args[0])
 
@@ -106,14 +111,6 @@ class BaseEntryFactoryTestCase(unittest.TestCase):
             _format_linked_resource(
                 'hdfs://[namenode]:8020/user/{hive}/[warehouse]/table_company'
                 '_names_from_?department?_that_;keeps;_records_with_'
-                'historical_data_from_every_single_member'
-                'historical_data_from_every_single_member'
-                'historical_data_from_every_single_member'
-                'historical_data_from_every_single_member'
-                'historical_data_from_every_single_member'
-                'historical_data_from_every_single_member'
-                'historical_data_from_every_single_member'
-                'historical_data_from_every_single_member'
                 'historical_data_from_every_single_member')
 
         self.assertEqual(expected_value, formatted_linked_resource)
