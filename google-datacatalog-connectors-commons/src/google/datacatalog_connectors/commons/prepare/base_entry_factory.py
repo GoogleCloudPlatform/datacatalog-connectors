@@ -19,12 +19,19 @@ import re
 import six
 import unicodedata
 
+from google.datacatalog_connectors.commons import prepare
+
 
 class BaseEntryFactory:
     __ASCII_CHARACTER_ENCODING = 'ASCII'
     __DEFAULT_ENTRY_ID_HASH_LENGTH = 8
     __DEFAULT_ENTRY_ID_INVALID_CHARS_REGEX_PATTERN = r'[^a-zA-Z0-9]+'
     __ID_MAX_LENGTH = 64
+
+    # Linked_resource must contain only letters, numbers, periods, colons,
+    # slashes, underscores, dashes and hashes.
+    __LINKED_RESOURCE_INVALID_CHARS_REGEX_PATTERN = r'[^\w\.\/\-#:]+'
+    __LINKED_RESOURCE_UTF8_MAX_LENGTH = 200
 
     @classmethod
     def _format_id(cls, source_id):
@@ -62,6 +69,30 @@ class BaseEntryFactory:
 
         return formatted_id[:cls.__ID_MAX_LENGTH - hash_length] + \
             hash.hexdigest()[:hash_length]
+
+    @classmethod
+    def _format_linked_resource(cls, linked_resource, normalize=True):
+        """
+        Formats the linked_resource to fit the string bytes limit enforced by
+        Data Catalog, and optionally normalizes it by applying a regex pattern
+        that replaces unsupported characters with underscore.
+
+        Warning: truncating and normalizing linked resources
+        may lead to invalid resulting URLs.
+
+        :param linked_resource: the value to be formatted.
+        :param normalize: enables the normalize logic.
+
+        :return: The formatted linked resource.
+        """
+        formatted_linked_resource = linked_resource
+        if normalize:
+            formatted_linked_resource = cls.__normalize_string(
+                cls.__LINKED_RESOURCE_INVALID_CHARS_REGEX_PATTERN,
+                linked_resource)
+
+        return prepare.DataCatalogStringsHelper.truncate_string(
+            formatted_linked_resource, cls.__LINKED_RESOURCE_UTF8_MAX_LENGTH)
 
     @classmethod
     def _format_display_name(cls, source_name):
