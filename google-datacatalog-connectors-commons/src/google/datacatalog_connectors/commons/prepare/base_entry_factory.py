@@ -77,8 +77,8 @@ class BaseEntryFactory:
         Data Catalog, and optionally normalizes it by applying a regex pattern
         that replaces unsupported characters with underscore.
 
-        :param linked_resource: value to be formatted.
-        :param normalize: enables normalize logic.
+        :param linked_resource: the value to be formatted.
+        :param normalize: enables the normalize logic.
 
         :return: The formatted linked resource.
         """
