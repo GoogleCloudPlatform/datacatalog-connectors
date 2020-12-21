@@ -77,6 +77,9 @@ class BaseEntryFactory:
         Data Catalog, and optionally normalizes it by applying a regex pattern
         that replaces unsupported characters with underscore.
 
+        This method may generate linked resources that are
+        not valid resource links, and won't link to a real URL.
+
         :param linked_resource: the value to be formatted.
         :param normalize: enables the normalize logic.
 
