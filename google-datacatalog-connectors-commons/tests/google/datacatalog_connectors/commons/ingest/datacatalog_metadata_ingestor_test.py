@@ -54,7 +54,8 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
         self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
 
-    def test_ingest_metadata_on_upsert_entry_failed_precondition_should_not_raise(self):  # noqa:E501
+    def test_ingest_metadata_on_upsert_entry_failed_precondition_should_not_raise(  # noqa:E501
+            self):
         entries = utils \
             .Utils.create_assembled_entries_user_defined_types()
 
@@ -67,7 +68,8 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
         self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
 
-    def test_ingest_metadata_on_upsert_entry_permission_denied_should_not_raise(self):  # noqa:E501
+    def test_ingest_metadata_on_upsert_entry_permission_denied_should_not_raise(  # noqa:E501
+            self):
         entries = utils \
             .Utils.create_assembled_entries_user_defined_types()
 
