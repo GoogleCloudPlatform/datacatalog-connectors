@@ -63,7 +63,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client = self.__datacatalog_client
         self.assertEqual(1, datacatalog_client.create_entry.call_count)
 
-    def test_create_entry_should_return_original_on_permission_denied(self):
+    def test_create_entry_should_raise_on_permission_denied(self):
         datacatalog_client = self.__datacatalog_client
         datacatalog_client.create_entry.side_effect = \
             exceptions.PermissionDenied('Permission denied')
@@ -72,11 +72,11 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
             'type', 'system', 'display_name', 'name', 'description',
             'linked_resource', 11, 22)
 
-        result = self.__datacatalog_facade.create_entry(
-            'entry_group_name', 'entry_id', entry)
+        self.assertRaises(exceptions.PermissionDenied,
+                          self.__datacatalog_facade.create_entry,
+                          'entry_group_name', 'entry_id', entry)
 
         self.assertEqual(1, datacatalog_client.create_entry.call_count)
-        self.assertEqual(entry, result)
 
     def test_get_entry_should_succeed(self):
         self.__datacatalog_facade.get_entry('entry_name')
@@ -105,7 +105,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_client.get_entry.call_count)
         self.assertEqual(1, datacatalog_client.create_entry.call_count)
 
-    def test_upsert_entry_nonexistent_on_failed_precondition_should_not_raise(
+    def test_upsert_entry_nonexistent_on_failed_precondition_should_raise(
             self):
 
         datacatalog_client = self.__datacatalog_client
@@ -119,8 +119,9 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
             'type', 'system', 'display_name', 'name', 'description',
             'linked_resource', 11, 22)
 
-        self.__datacatalog_facade.upsert_entry('entry_group_name', 'entry_id',
-                                               entry)
+        self.assertRaises(exceptions.FailedPrecondition,
+                          self.__datacatalog_facade.upsert_entry,
+                          'entry_group_name', 'entry_id', entry)
 
         self.assertEqual(1, datacatalog_client.get_entry.call_count)
         self.assertEqual(1, datacatalog_client.create_entry.call_count)
@@ -326,7 +327,7 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
         datacatalog_client.update_entry.assert_called_with(entry=entry_2,
                                                            update_mask=None)
 
-    def test_upsert_entry_should_return_original_on_failed_precondition(self):
+    def test_upsert_entry_should_raise_on_failed_precondition(self):
         entry_1 = utils.Utils.create_entry_user_defined_type(
             'type', 'system', 'display_name', 'name', 'description',
             'linked_resource_1', 11, 22)
@@ -340,12 +341,12 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
             'type', 'system', 'display_name', 'name', 'description',
             'linked_resource_2', 11, 22)
 
-        result = self.__datacatalog_facade.upsert_entry(
-            'entry_group_name', 'entry_id', entry_2)
+        self.assertRaises(exceptions.FailedPrecondition,
+                          self.__datacatalog_facade.upsert_entry,
+                          'entry_group_name', 'entry_id', entry_2)
 
         self.assertEqual(1, datacatalog_client.get_entry.call_count)
         self.assertEqual(1, datacatalog_client.update_entry.call_count)
-        self.assertEqual(entry_1, result)
 
     def test_upsert_entry_unchanged_should_not_update(self):
         entry = utils.Utils.create_entry_user_defined_type(
