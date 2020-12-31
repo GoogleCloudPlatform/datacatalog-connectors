@@ -54,6 +54,34 @@ class DataCatalogMetadataIngestorTestCase(unittest.TestCase):
         self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
         self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
 
+    def test_ingest_metadata_on_upsert_entry_failed_precondition_should_not_raise(  # noqa:E501
+            self):
+        entries = utils \
+            .Utils.create_assembled_entries_user_defined_types()
+
+        datacatalog_facade = self.__datacatalog_facade
+        datacatalog_facade.upsert_entry.side_effect = \
+            exceptions.FailedPrecondition('Failed precondition')
+
+        self.__metadata_ingestor.ingest_metadata(entries, {})
+
+        self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
+        self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
+
+    def test_ingest_metadata_on_upsert_entry_permission_denied_should_not_raise(  # noqa:E501
+            self):
+        entries = utils \
+            .Utils.create_assembled_entries_user_defined_types()
+
+        datacatalog_facade = self.__datacatalog_facade
+        datacatalog_facade.upsert_entry.side_effect = \
+            exceptions.PermissionDenied('Permission denied')
+
+        self.__metadata_ingestor.ingest_metadata(entries, {})
+
+        self.assertEqual(1, datacatalog_facade.create_entry_group.call_count)
+        self.assertEqual(2, datacatalog_facade.upsert_entry.call_count)
+
     def test_ingest_metadata_with_delete_tags_managed_template_config_should_succeed(  # noqa:E501
             self):
         entries = utils \

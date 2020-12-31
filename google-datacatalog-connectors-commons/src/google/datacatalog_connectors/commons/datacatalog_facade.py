@@ -50,18 +50,13 @@ class DataCatalogFacade:
                                                     entry_id=entry_id,
                                                     entry=entry)
             self.__log_entry_operation('created', entry=entry)
-        except exceptions.FailedPrecondition as e:
+            return entry
+        except (exceptions.FailedPrecondition,
+                exceptions.PermissionDenied) as e:
             entry_name = '{}/entries/{}'.format(entry_group_name, entry_id)
             self.__log_entry_operation('was not created',
                                        entry_name=entry_name)
-            logging.warning('Error: %s', e)
-        except exceptions.PermissionDenied as e:
-            entry_name = '{}/entries/{}'.format(entry_group_name, entry_id)
-            self.__log_entry_operation('was not created',
-                                       entry_name=entry_name)
-            logging.warning('Error: %s', e)
-
-        return entry
+            raise e
 
     def get_entry(self, name):
         """Retrieves Data Catalog Entry.
@@ -91,7 +86,6 @@ class DataCatalogFacade:
         :param entry: An Entry object.
         :return: The updated or created Entry.
         """
-        persisted_entry = entry
         entry_name = '{}/entries/{}'.format(entry_group_name, entry_id)
         try:
             persisted_entry = self.get_entry(entry_name)
@@ -101,17 +95,17 @@ class DataCatalogFacade:
             else:
                 self.__log_entry_operation('is up-to-date',
                                            entry=persisted_entry)
+            return persisted_entry
         except exceptions.PermissionDenied:
             self.__log_entry_operation('does not exist', entry_name=entry_name)
             persisted_entry = self.create_entry(
                 entry_group_name=entry_group_name,
                 entry_id=entry_id,
                 entry=entry)
+            return persisted_entry
         except exceptions.FailedPrecondition as e:
             logging.warning('Entry was not updated: %s', entry_name)
-            logging.warning('Error: %s', e)
-
-        return persisted_entry
+            raise e
 
     @classmethod
     def __entry_was_updated(cls, current_entry, new_entry):

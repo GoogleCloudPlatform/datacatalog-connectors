@@ -91,22 +91,29 @@ class DataCatalogMetadataIngestor:
 
             entry_id = assembled_entry_data.entry_id
             new_entry = assembled_entry_data.entry
-            entry = self.__datacatalog_facade.upsert_entry(
-                entry_group_name, entry_id, new_entry)
 
-            logging.info('')
-            logging.info('Starting the upsert tags step')
-            self.__datacatalog_facade.upsert_tags(entry,
-                                                  assembled_entry_data.tags)
-            if config and 'delete_tags' in config:
-                delete_tags = config['delete_tags']
+            try:
+                entry = self.__datacatalog_facade.upsert_entry(
+                    entry_group_name, entry_id, new_entry)
+
                 logging.info('')
-                logging.info('Starting the delete tags step')
-                # If not specified uses the entry group id to find
-                # what tag templates should have their tags deleted.
-                managed_tag_template = delete_tags.get('managed_tag_template')
-                if not managed_tag_template:
-                    managed_tag_template = self.__entry_group_id
+                logging.info('Starting the upsert tags step')
+                self.__datacatalog_facade.upsert_tags(
+                    entry, assembled_entry_data.tags)
+                if config and 'delete_tags' in config:
+                    delete_tags = config['delete_tags']
+                    logging.info('')
+                    logging.info('Starting the delete tags step')
+                    # If not specified uses the entry group id to find
+                    # what tag templates should have their tags deleted.
+                    managed_tag_template = delete_tags.get(
+                        'managed_tag_template')
+                    if not managed_tag_template:
+                        managed_tag_template = self.__entry_group_id
 
-                self.__datacatalog_facade.delete_tags(
-                    entry, assembled_entry_data.tags, managed_tag_template)
+                    self.__datacatalog_facade.delete_tags(
+                        entry, assembled_entry_data.tags, managed_tag_template)
+            except (exceptions.FailedPrecondition,
+                    exceptions.PermissionDenied):
+                logging.warning('Entry ignored, error on upsert_entry:',
+                                exc_info=True)
