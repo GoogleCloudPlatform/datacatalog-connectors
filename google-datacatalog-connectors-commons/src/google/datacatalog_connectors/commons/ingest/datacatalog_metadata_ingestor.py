@@ -115,6 +115,5 @@ class DataCatalogMetadataIngestor:
                         entry, assembled_entry_data.tags, managed_tag_template)
             except (exceptions.FailedPrecondition,
                     exceptions.PermissionDenied):
-                logging.warning(
-                    'Entry ignored, error on upsert_entry:',
-                    exc_info=True)
+                logging.warning('Entry ignored, error on upsert_entry:',
+                                exc_info=True)
