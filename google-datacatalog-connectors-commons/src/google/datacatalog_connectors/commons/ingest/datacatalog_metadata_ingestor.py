@@ -116,5 +116,5 @@ class DataCatalogMetadataIngestor:
             except (exceptions.FailedPrecondition,
                     exceptions.PermissionDenied):
                 logging.warning(
-                    'Entry ignored, unhandled error on upsert_entry:',
+                    'Entry ignored, error on upsert_entry:',
                     exc_info=True)
