@@ -103,6 +103,11 @@ class BaseEntryFactory:
         formatted_str = re.sub(
             regex_pattern, '_',
             cls.__normalize_ascii_chars(source_string.strip()))
+
+        # The __normalize_ascii_chars logic may replace a non ascii
+        # char with space at the end of the string, so we need to do
+        # an additional strip() to make sure it is removed from the
+        # final normalized string.
         return formatted_str.strip()
 
     @classmethod
