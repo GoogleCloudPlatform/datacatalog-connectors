@@ -96,14 +96,14 @@ class BaseEntryFactory:
 
     @classmethod
     def _format_display_name(cls, source_name):
-        return cls.__normalize_string(r'[^\w\- ]+', source_name).strip()
+        return cls.__normalize_string(r'[^\w\- ]+', source_name)
 
     @classmethod
     def __normalize_string(cls, regex_pattern, source_string):
         formatted_str = re.sub(
             regex_pattern, '_',
             cls.__normalize_ascii_chars(source_string.strip()))
-        return formatted_str
+        return formatted_str.strip()
 
     @classmethod
     def __normalize_ascii_chars(cls, source_string):
