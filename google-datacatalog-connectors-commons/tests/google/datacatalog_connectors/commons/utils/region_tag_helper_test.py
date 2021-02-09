@@ -39,7 +39,8 @@ class RegionTagHelperTestCase(unittest.TestCase):
         content_string = '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START] \n' + \
             expected_tag_content + '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END] \n'
 
-        extracted_tag_content = region_tag_helper.extract_content(content_string)
+        extracted_tag_content = region_tag_helper.extract_content(
+            content_string)
 
         self.assertEqual(extracted_tag_content, expected_tag_content)
 
@@ -61,7 +62,8 @@ class RegionTagHelperTestCase(unittest.TestCase):
         content_string = '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START] \n' + \
             expected_tag_content + '\n'
 
-        extracted_tag_content = region_tag_helper.extract_content(content_string)
+        extracted_tag_content = region_tag_helper.extract_content(
+            content_string)
 
         self.assertIsNone(extracted_tag_content)
 
@@ -82,7 +84,8 @@ class RegionTagHelperTestCase(unittest.TestCase):
 
         content_string = expected_tag_content + '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END] \n'
 
-        extracted_tag_content = region_tag_helper.extract_content(content_string)
+        extracted_tag_content = region_tag_helper.extract_content(
+            content_string)
 
         self.assertIsNone(extracted_tag_content)
 
@@ -101,7 +104,8 @@ class RegionTagHelperTestCase(unittest.TestCase):
                 type: 'int'
         '''.strip()
 
-        extracted_tag_content = region_tag_helper.extract_content(expected_tag_content)
+        extracted_tag_content = region_tag_helper.extract_content(
+            expected_tag_content)
 
         self.assertIsNone(extracted_tag_content)
 
@@ -123,6 +127,7 @@ class RegionTagHelperTestCase(unittest.TestCase):
         content_string = '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_STARX] \n' + \
             expected_tag_content + '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_ENX] \n'
 
-        extracted_tag_content = region_tag_helper.extract_content(content_string)
+        extracted_tag_content = region_tag_helper.extract_content(
+            content_string)
 
         self.assertIsNone(extracted_tag_content)
