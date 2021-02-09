@@ -20,20 +20,22 @@ from schema import Schema, And, Optional
 
 
 class AssetMetadataConfig:
-    __schema = Schema({
-        'metadata_definition': {
-            'name': And(str),
-            'purpose': And(str),
-            Optional('inputs'): [{
+    __schema = Schema(
+        {
+            'metadata_definition': {
                 'name': And(str),
-                'type': And(str)
-            }],
-            Optional('outputs'): [{
-                'name': And(str),
-                'type': And(str)
-            }]
-        }
-    }, ignore_extra_keys=True)
+                'purpose': And(str),
+                Optional('inputs'): [{
+                    'name': And(str),
+                    'type': And(str)
+                }],
+                Optional('outputs'): [{
+                    'name': And(str),
+                    'type': And(str)
+                }]
+            }
+        },
+        ignore_extra_keys=True)
 
     @classmethod
     def parse_as_dict(cls, content):

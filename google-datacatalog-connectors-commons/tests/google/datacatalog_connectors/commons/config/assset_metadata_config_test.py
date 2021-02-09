@@ -49,7 +49,7 @@ class AssetMetadataConfigTestCase(unittest.TestCase):
         metadata_definition:
           name: 'sp_calculateOrder'
           purpose: 'This stored procedure will calculate orders.'
-          extra: 'unused extra attribute'  
+          extra: 'unused extra attribute'
           inputs:
             - name: 'in1'
               type: 'string'
