@@ -42,6 +42,26 @@ class AssetMetadataConfigTestCase(unittest.TestCase):
 
         self.assertIsNotNone(config_dict)
 
+    def test_parse_as_dict_valid_schema_extra_attributes_should_succeed(self):
+        asset_metadata_config = config.AssetMetadataConfig()
+
+        content = '''
+        metadata_definition:
+          name: 'sp_calculateOrder'
+          purpose: 'This stored procedure will calculate orders.'
+          extra: 'unused extra attribute'  
+          inputs:
+            - name: 'in1'
+              type: 'string'
+          outputs:
+            - name: 'out1'
+              type: 'int'
+        '''
+
+        config_dict = asset_metadata_config.parse_as_dict(content)
+
+        self.assertIsNotNone(config_dict)
+
     def test_parse_as_dict_missing_optional_attributes_should_succeed(self):
         asset_metadata_config = config.AssetMetadataConfig()
 

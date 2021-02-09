@@ -33,7 +33,7 @@ class AssetMetadataConfig:
                 'type': And(str)
             }]
         }
-    })
+    }, ignore_extra_keys=True)
 
     @classmethod
     def parse_as_dict(cls, content):
