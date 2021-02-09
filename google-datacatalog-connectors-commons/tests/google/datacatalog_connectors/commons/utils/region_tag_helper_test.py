@@ -36,8 +36,10 @@ class RegionTagHelperTestCase(unittest.TestCase):
                 type: 'int'
         '''.strip()
 
-        content_string = '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START] \n' + \
-            expected_tag_content + '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END] \n'
+        content_string = \
+            '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START] \n' + \
+            expected_tag_content + \
+            '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END] \n'
 
         extracted_tag_content = region_tag_helper.extract_content(
             content_string)
@@ -59,7 +61,8 @@ class RegionTagHelperTestCase(unittest.TestCase):
                 type: 'int'
         '''.strip()
 
-        content_string = '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START] \n' + \
+        content_string = \
+            '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START] \n' + \
             expected_tag_content + '\n'
 
         extracted_tag_content = region_tag_helper.extract_content(
@@ -82,7 +85,8 @@ class RegionTagHelperTestCase(unittest.TestCase):
                 type: 'int'
         '''.strip()
 
-        content_string = expected_tag_content + '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END] \n'
+        content_string = expected_tag_content + \
+            '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END] \n'
 
         extracted_tag_content = region_tag_helper.extract_content(
             content_string)
@@ -124,8 +128,10 @@ class RegionTagHelperTestCase(unittest.TestCase):
                 type: 'int'
         '''.strip()
 
-        content_string = '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_STARX] \n' + \
-            expected_tag_content + '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_ENX] \n'
+        content_string = \
+            '[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_STARX] \n' + \
+            expected_tag_content + \
+            '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_ENX] \n'
 
         extracted_tag_content = region_tag_helper.extract_content(
             content_string)

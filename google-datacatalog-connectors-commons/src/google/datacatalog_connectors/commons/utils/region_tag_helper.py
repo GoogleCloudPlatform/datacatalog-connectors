@@ -38,8 +38,8 @@ class RegionTagHelper:
         re_match = re.match(pattern=cls.__REGION_TAG_GROUP_REGEX,
                             string=content_with_tags)
         if re_match:
-            region_tag_start, content_with_tags, region_tag_end, = re_match.groups(
-            )
+            region_tag_start, content_with_tags, region_tag_end, = \
+                re_match.groups()
             logging.debug(
                 'Region tags defined! START region tag: %s END region tag: %s',
                 region_tag_start, region_tag_end)
