@@ -20,10 +20,10 @@ import re
 
 class RegionTagHelper:
     """
-    Regex pattern to split string into 3 groups:
+    Regex pattern to split a string into 3 groups:
 
     Group 1: [{REGION_TAG_NAME}_START]
-    Group 2: Content between START and END region tags
+    Group 2: Content between the START and END tags
     Group 3: [{REGION_TAG_NAME}_END]
     """
     __REGION_TAG_GROUP_REGEX = re.compile(
@@ -31,9 +31,9 @@ class RegionTagHelper:
         re.MULTILINE)
 
     @classmethod
-    def extract_content(cls, content_with_tags):
+    def extract_content(cls, string):
         """
-        Extract content inside defined START/END region tags.
+        Extracts the content between START and END region tags.
         """
         re_match = re.match(pattern=cls.__REGION_TAG_GROUP_REGEX,
                             string=content_with_tags)
@@ -41,9 +41,9 @@ class RegionTagHelper:
             region_tag_start, content_with_tags, region_tag_end, = \
                 re_match.groups()
             logging.debug(
-                'Region tags defined! START region tag: %s END region tag: %s',
+                'Region tags found! START tag: "%s" END tag: "%s"',
                 region_tag_start, region_tag_end)
             # Strip additional whitespaces
             return content_with_tags.strip()
         else:
-            logging.debug('No START/END region tags defined!')
+            logging.debug('No START/END region tags found!')
