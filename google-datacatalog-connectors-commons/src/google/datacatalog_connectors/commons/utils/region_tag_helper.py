@@ -28,7 +28,6 @@ class RegionTagHelper:
     In the scenario there are multiple tags with the same name, the
     logic will be applied only to the last tag.
     """
-
     """
     Regex pattern to split a string into 3 groups:
 
@@ -53,8 +52,7 @@ class RegionTagHelper:
 
         compiled_regex = re.compile(tag_group_regex, re.MULTILINE)
 
-        re_match = re.match(pattern=compiled_regex,
-                            string=string)
+        re_match = re.match(pattern=compiled_regex, string=string)
         if re_match:
             start_tag, tag_content, end_tag, = \
                 re_match.group(
