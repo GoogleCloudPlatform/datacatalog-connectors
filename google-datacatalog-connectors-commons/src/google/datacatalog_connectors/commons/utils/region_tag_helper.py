@@ -20,6 +20,16 @@ import re
 
 class RegionTagHelper:
     """
+    Helper class with common logic to work with region tags like:
+    [GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START]
+    ...
+    [GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END]
+
+    In the scenario there are multiple tags with the same name, the
+    logic will be applied only to the last tag.
+    """
+
+    """
     Regex pattern to split a string into 3 groups:
 
     Group 1: [{REGION_TAG_NAME}_START]
@@ -27,31 +37,30 @@ class RegionTagHelper:
     Group 3: [{REGION_TAG_NAME}_END]
     """
     __REGION_TAG_GROUP_REGEX_TEMPLATE = \
-        r'^(?s:.)*(?P<region_tag_start>\[{}_START\][^\S\r\n]*)' \
+        r'^(?s:.)*(?P<start_tag>\[{}_START\][^\S\r\n]*)' \
         r'(?P<tag_content>(?s:.)*)' \
-        r'(?P<region_tag_end>\s*\[{}_END\]\s*)$'
+        r'(?P<end_tag>\s*\[{}_END\]\s*)$'
 
     @classmethod
-    def extract_content(cls, region_tag_name, string):
+    def extract_content(cls, tag_name, string):
         """
         Extracts the content between START and END region_tag_name tags.
         """
 
-        region_tag_group_regex = \
+        tag_group_regex = \
             cls.__REGION_TAG_GROUP_REGEX_TEMPLATE.replace(
-                '{}', region_tag_name)
+                '{}', tag_name)
 
-        region_tag_group_regex_compiled = re.compile(region_tag_group_regex,
-                                                     re.MULTILINE)
+        compiled_regex = re.compile(tag_group_regex, re.MULTILINE)
 
-        re_match = re.match(pattern=region_tag_group_regex_compiled,
+        re_match = re.match(pattern=compiled_regex,
                             string=string)
         if re_match:
-            region_tag_start, tag_content, region_tag_end, = \
+            start_tag, tag_content, end_tag, = \
                 re_match.group(
-                    'region_tag_start', 'tag_content', 'region_tag_end')
+                    'start_tag', 'tag_content', 'end_tag')
             logging.debug('Region tags found! START tag: "%s" END tag: "%s"',
-                          region_tag_start, region_tag_end)
+                          start_tag, end_tag)
             # Strip additional whitespaces
             return tag_content.strip()
 
