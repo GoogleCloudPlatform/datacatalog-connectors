@@ -26,24 +26,33 @@ class RegionTagHelper:
     Group 2: Content between the START and END tags
     Group 3: [{REGION_TAG_NAME}_END]
     """
-    __REGION_TAG_GROUP_REGEX = re.compile(
-        r"^(\s*\[\S*_START\][^\S\r\n]*)((?s:.)*)(\s*\[\S*_END\]\s*)",
-        re.MULTILINE)
+    __REGION_TAG_GROUP_REGEX_TEMPLATE = \
+        r'^(?s:.)*(?P<region_tag_start>\[{}_START\][^\S\r\n]*)' \
+        r'(?P<tag_content>(?s:.)*)' \
+        r'(?P<region_tag_end>\s*\[{}_END\]\s*)$'
 
     @classmethod
-    def extract_content(cls, string):
+    def extract_content(cls, region_tag_name, string):
         """
-        Extracts the content between START and END region tags.
+        Extracts the content between START and END region_tag_name tags.
         """
-        re_match = re.match(pattern=cls.__REGION_TAG_GROUP_REGEX,
-                            string=content_with_tags)
+
+        region_tag_group_regex = \
+            cls.__REGION_TAG_GROUP_REGEX_TEMPLATE.replace(
+                '{}', region_tag_name)
+
+        region_tag_group_regex_compiled = re.compile(region_tag_group_regex,
+                                                     re.MULTILINE)
+
+        re_match = re.match(pattern=region_tag_group_regex_compiled,
+                            string=string)
         if re_match:
-            region_tag_start, content_with_tags, region_tag_end, = \
-                re_match.groups()
-            logging.debug(
-                'Region tags found! START tag: "%s" END tag: "%s"',
-                region_tag_start, region_tag_end)
+            region_tag_start, tag_content, region_tag_end, = \
+                re_match.group(
+                    'region_tag_start', 'tag_content', 'region_tag_end')
+            logging.debug('Region tags found! START tag: "%s" END tag: "%s"',
+                          region_tag_start, region_tag_end)
             # Strip additional whitespaces
-            return content_with_tags.strip()
-        else:
-            logging.debug('No START/END region tags found!')
+            return tag_content.strip()
+
+        logging.debug('No START/END region tags found!')
