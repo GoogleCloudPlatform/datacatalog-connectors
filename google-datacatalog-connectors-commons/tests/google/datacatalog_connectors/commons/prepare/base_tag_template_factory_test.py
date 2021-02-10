@@ -1,7 +1,6 @@
 #!/usr/bin/python
-# coding=utf-8
 #
-# Copyright 2020 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +16,9 @@
 
 import unittest
 
-from google.datacatalog_connectors.commons import prepare
-
 from google.cloud import datacatalog
+
+from google.datacatalog_connectors.commons import prepare
 
 
 class BaseTagFactoryTestCase(unittest.TestCase):
@@ -35,6 +34,28 @@ class BaseTagFactoryTestCase(unittest.TestCase):
         self.assertEqual(2, len(field.type.enum_type.allowed_values))
         self.assertEqual('Enum field', field.display_name)
 
+    def test_add_enum_type_field_should_optionally_set_is_required(self):
+        tag_template = datacatalog.TagTemplate()
+        prepare.BaseTagTemplateFactory._add_enum_type_field(tag_template,
+                                                            'enum-field',
+                                                            ['VALUE_1'],
+                                                            'Enum field',
+                                                            is_required=True)
+
+        field = tag_template.fields['enum-field']
+        self.assertEqual(True, field.is_required)
+
+    def test_add_enum_type_field_should_optionally_set_order(self):
+        tag_template = datacatalog.TagTemplate()
+        prepare.BaseTagTemplateFactory._add_enum_type_field(tag_template,
+                                                            'enum-field',
+                                                            ['VALUE_1'],
+                                                            'Enum field',
+                                                            order=10)
+
+        field = tag_template.fields['enum-field']
+        self.assertEqual(10, field.order)
+
     def test_add_primitive_type_field_should_set_elementary_properties(self):
         tag_template = datacatalog.TagTemplate()
         prepare.BaseTagTemplateFactory._add_primitive_type_field(
@@ -47,3 +68,27 @@ class BaseTagFactoryTestCase(unittest.TestCase):
         self.assertEqual(datacatalog.FieldType.PrimitiveType.STRING,
                          field.type.primitive_type)
         self.assertEqual('String field', field.display_name)
+
+    def test_add_primitive_type_field_should_optionally_set_is_required(self):
+        tag_template = datacatalog.TagTemplate()
+        prepare.BaseTagTemplateFactory._add_primitive_type_field(
+            tag_template,
+            'string-field',
+            datacatalog.FieldType.PrimitiveType.STRING,
+            'String field',
+            is_required=True)
+
+        field = tag_template.fields['string-field']
+        self.assertEqual(True, field.is_required)
+
+    def test_add_primitive_type_field_should_optionally_set_order(self):
+        tag_template = datacatalog.TagTemplate()
+        prepare.BaseTagTemplateFactory._add_primitive_type_field(
+            tag_template,
+            'string-field',
+            datacatalog.FieldType.PrimitiveType.STRING,
+            'String field',
+            order=10)
+
+        field = tag_template.fields['string-field']
+        self.assertEqual(10, field.order)
