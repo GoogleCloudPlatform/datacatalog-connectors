@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .region_tag_helper import RegionTagHelper
 from .values_comparable_object import ValuesComparableObject
 
-__all__ = ('ValuesComparableObject',)
+__all__ = ('RegionTagHelper', 'ValuesComparableObject')
