@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright 2020 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,8 +20,13 @@ from google.cloud import datacatalog
 class BaseTagTemplateFactory:
 
     @classmethod
-    def _add_enum_type_field(cls, tag_template, field_id, values,
-                             display_name):
+    def _add_enum_type_field(cls,
+                             tag_template,
+                             field_id,
+                             values,
+                             display_name,
+                             is_required=False,
+                             order=None):
 
         field = datacatalog.TagTemplateField()
         for value in values:
@@ -30,13 +35,24 @@ class BaseTagTemplateFactory:
             field.type.enum_type.allowed_values.append(enum_value)
 
         field.display_name = display_name
+        field.is_required = is_required
+        field.order = order
+
         tag_template.fields[field_id] = field
 
     @classmethod
-    def _add_primitive_type_field(cls, tag_template, field_id, field_type,
-                                  display_name):
+    def _add_primitive_type_field(cls,
+                                  tag_template,
+                                  field_id,
+                                  field_type,
+                                  display_name,
+                                  is_required=False,
+                                  order=None):
 
         field = datacatalog.TagTemplateField()
         field.type.primitive_type = field_type
         field.display_name = display_name
+        field.is_required = is_required
+        field.order = order
+
         tag_template.fields[field_id] = field
