@@ -19,22 +19,19 @@ import re
 
 
 class RegionTagHelper:
-    """
-    Helper class with common logic to work with region tags like:
+    """Helper class with common logic to work with region tags such as:
     [GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START]
     ...
     [GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END]
 
     In the scenario there are multiple tags with the same name, the
-    logic will be applied only to the last tag.
+    logic will be applied only to the last one.
     """
-    """
-    Regex pattern to split a string into 3 groups:
 
-    Group 1: [{REGION_TAG_NAME}_START]
-    Group 2: Content between the START and END tags
-    Group 3: [{REGION_TAG_NAME}_END]
-    """
+    # Regex pattern to split a string into 3 groups:
+    # Group 1: [{REGION_TAG_NAME}_START]
+    # Group 2: Content between the START and END tags
+    # Group 3: [{REGION_TAG_NAME}_END]
     __REGION_TAG_GROUP_REGEX_TEMPLATE = \
         r'^(?s:.)*(?P<start_tag>\[{}_START\][^\S\r\n]*)' \
         r'(?P<tag_content>(?s:.)*)' \
@@ -43,7 +40,7 @@ class RegionTagHelper:
     @classmethod
     def extract_content(cls, tag_name, string):
         """
-        Extracts the content between START and END region_tag_name tags.
+        Extracts the content between START and END tags.
         """
 
         tag_group_regex = \
