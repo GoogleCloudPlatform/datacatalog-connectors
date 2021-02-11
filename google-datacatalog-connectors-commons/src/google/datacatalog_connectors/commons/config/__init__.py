@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright 2020 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .assset_metadata_config import AssetMetadataConfig
-from .yaml_config import YamlConfig
+from .yaml_config import YamlConfig  # noqa: F401
 
-__all__ = ('AssetMetadataConfig', 'YamlConfig')
+__all__ = 'YamlConfig'
