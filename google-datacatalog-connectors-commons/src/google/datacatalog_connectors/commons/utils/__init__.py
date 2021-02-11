@@ -16,6 +16,5 @@
 
 from .region_tag_helper import RegionTagHelper
 from .values_comparable_object import ValuesComparableObject
-from .region_tag_helper import RegionTagHelper
 
 __all__ = ('RegionTagHelper', 'ValuesComparableObject')

@@ -60,4 +60,3 @@ class RegionTagHelper:
             return tag_content.strip()
 
         logging.debug('No START/END region tags found!')
-

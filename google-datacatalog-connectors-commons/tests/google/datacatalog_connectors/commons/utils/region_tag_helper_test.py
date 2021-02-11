@@ -1,10 +1,6 @@
 #!/usr/bin/python
 #
-<<<<<<< HEAD
-# Copyright 2020 Google LLC
-=======
 # Copyright 2021 Google LLC
->>>>>>> master
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,12 +42,6 @@ class RegionTagHelperTestCase(unittest.TestCase):
             '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END] \n'
 
         extracted_tag_content = region_tag_helper.extract_content(
-<<<<<<< HEAD
-            content_string)
-
-        self.assertEqual(extracted_tag_content, expected_tag_content)
-
-=======
             'GOOGLE_DATA_CATALOG_METADATA_DEFINITION', content_string)
 
         self.assertEqual(extracted_tag_content, expected_tag_content)
@@ -149,7 +139,6 @@ class RegionTagHelperTestCase(unittest.TestCase):
 
         self.assertEqual(extracted_tag_content, expected_tag_content_2)
 
->>>>>>> master
     def test_extract_tag_content_no_end_region_tag_should_return_none(self):
         region_tag_helper = utils.RegionTagHelper()
 
@@ -170,11 +159,7 @@ class RegionTagHelperTestCase(unittest.TestCase):
             expected_tag_content + '\n'
 
         extracted_tag_content = region_tag_helper.extract_content(
-<<<<<<< HEAD
-            content_string)
-=======
             'GOOGLE_DATA_CATALOG_METADATA_DEFINITION', content_string)
->>>>>>> master
 
         self.assertIsNone(extracted_tag_content)
 
@@ -197,22 +182,14 @@ class RegionTagHelperTestCase(unittest.TestCase):
             '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END] \n'
 
         extracted_tag_content = region_tag_helper.extract_content(
-<<<<<<< HEAD
-            content_string)
-=======
             'GOOGLE_DATA_CATALOG_METADATA_DEFINITION', content_string)
->>>>>>> master
 
         self.assertIsNone(extracted_tag_content)
 
     def test_extract_tag_content_no_region_tags_should_return_none(self):
         region_tag_helper = utils.RegionTagHelper()
 
-<<<<<<< HEAD
-        expected_tag_content = '''
-=======
         content_string = '''
->>>>>>> master
         metadata_definition:
           - name: 'sp_calculateOrder'
             purpose: 'This stored procedure will calculate orders.'
@@ -225,11 +202,7 @@ class RegionTagHelperTestCase(unittest.TestCase):
         '''.strip()
 
         extracted_tag_content = region_tag_helper.extract_content(
-<<<<<<< HEAD
-            expected_tag_content)
-=======
             'GOOGLE_DATA_CATALOG_METADATA_DEFINITION', content_string)
->>>>>>> master
 
         self.assertIsNone(extracted_tag_content)
 
@@ -254,10 +227,6 @@ class RegionTagHelperTestCase(unittest.TestCase):
             '\n[GOOGLE_DATA_CATALOG_METADATA_DEFINITION_ENX] \n'
 
         extracted_tag_content = region_tag_helper.extract_content(
-<<<<<<< HEAD
-            content_string)
-=======
             'GOOGLE_DATA_CATALOG_METADATA_DEFINITION', content_string)
->>>>>>> master
 
         self.assertIsNone(extracted_tag_content)
