@@ -21,4 +21,4 @@ class YamlConfig:
 
     @classmethod
     def parse_as_dict(cls, content):
-        return yaml.load(content, Loader=yaml.FullLoader) or dict()
+        return yaml.load(content, Loader=yaml.FullLoader)

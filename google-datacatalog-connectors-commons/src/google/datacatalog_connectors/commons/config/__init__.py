@@ -14,6 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .yaml_config import YamlConfig  # noqa: F401
+from .yaml_config import YamlConfig
 
-__all__ = 'YamlConfig'
+__all__ = ['YamlConfig']
