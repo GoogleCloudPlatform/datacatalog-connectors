@@ -19,31 +19,45 @@ import re
 
 
 class RegionTagHelper:
-    """
-    Regex pattern to split string into 3 groups:
+    """Helper class with common logic to work with region tags such as:
+    [GOOGLE_DATA_CATALOG_METADATA_DEFINITION_START]
+    ...
+    [GOOGLE_DATA_CATALOG_METADATA_DEFINITION_END]
 
-    Group 1: [{REGION_TAG_NAME}_START]
-    Group 2: Content between START and END region tags
-    Group 3: [{REGION_TAG_NAME}_END]
+    In the scenario there are multiple tags with the same name, the
+    logic will be applied only to the last one.
     """
-    __REGION_TAG_GROUP_REGEX = re.compile(
-        r"^(\s*\[\S*_START\][^\S\r\n]*)((?s:.)*)(\s*\[\S*_END\]\s*)",
-        re.MULTILINE)
+
+    # Regex pattern to split a string into 3 groups:
+    # Group 1: [{REGION_TAG_NAME}_START]
+    # Group 2: Content between the START and END tags
+    # Group 3: [{REGION_TAG_NAME}_END]
+    __REGION_TAG_GROUP_REGEX_TEMPLATE = \
+        r'^(?s:.)*(?P<start_tag>\[{}_START\][^\S\r\n]*)' \
+        r'(?P<tag_content>(?s:.)*)' \
+        r'(?P<end_tag>\s*\[{}_END\]\s*)$'
 
     @classmethod
-    def extract_content(cls, content_with_tags):
+    def extract_content(cls, tag_name, string):
         """
-        Extract content inside defined START/END region tags.
+        Extracts the content between START and END tags.
         """
-        re_match = re.match(pattern=cls.__REGION_TAG_GROUP_REGEX,
-                            string=content_with_tags)
+
+        tag_group_regex = \
+            cls.__REGION_TAG_GROUP_REGEX_TEMPLATE.replace(
+                '{}', tag_name)
+
+        compiled_regex = re.compile(tag_group_regex, re.MULTILINE)
+
+        re_match = re.match(pattern=compiled_regex, string=string)
         if re_match:
-            region_tag_start, content_with_tags, region_tag_end, = \
-                re_match.groups()
-            logging.debug(
-                'Region tags defined! START region tag: %s END region tag: %s',
-                region_tag_start, region_tag_end)
+            start_tag, tag_content, end_tag, = \
+                re_match.group(
+                    'start_tag', 'tag_content', 'end_tag')
+            logging.debug('Region tags found! START tag: "%s" END tag: "%s"',
+                          start_tag, end_tag)
             # Strip additional whitespaces
-            return content_with_tags.strip()
-        else:
-            logging.debug('No START/END region tags defined!')
+            return tag_content.strip()
+
+        logging.debug('No START/END region tags found!')
+
