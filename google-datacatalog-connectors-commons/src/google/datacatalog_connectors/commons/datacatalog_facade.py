@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright 2020 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -65,6 +65,17 @@ class DataCatalogFacade:
         :return: An Entry object if it exists.
         """
         return self.__datacatalog.get_entry(name=name)
+
+    def lookup_entry(self, linked_resource):
+        """Get an Entry by target resource name.
+
+        :param linked_resource: The full name of the resource the Data Catalog
+            Entry represents.
+        :return: An Entry object if it exists.
+        """
+        request = datacatalog.LookupEntryRequest()
+        request.linked_resource = linked_resource
+        return self.__datacatalog.lookup_entry(request=request)
 
     def update_entry(self, entry):
         """Updates an Entry.
