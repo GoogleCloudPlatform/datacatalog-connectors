@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright 2020 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -83,6 +83,26 @@ class DataCatalogFacadeTestCase(unittest.TestCase):
 
         datacatalog_client = self.__datacatalog_client
         self.assertEqual(1, datacatalog_client.get_entry.call_count)
+
+    def test_lookup_entry_should_return_datacatalog_client_result(self):
+        fake_entry = datacatalog.Entry()
+        fake_entry.linked_resource = 'linked_resource'
+
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.lookup_entry.return_value = fake_entry
+
+        entry = self.__datacatalog_facade.lookup_entry('linked_resource')
+
+        self.assertEqual(fake_entry, entry)
+
+    def test_lookup_entry_should_fulfill_linked_resource_request_field(self):
+        self.__datacatalog_facade.lookup_entry('linked_resource')
+
+        fake_request = datacatalog.LookupEntryRequest()
+        fake_request.linked_resource = 'linked_resource'
+        datacatalog_client = self.__datacatalog_client
+        datacatalog_client.lookup_entry.assert_called_once_with(
+            request=fake_request)
 
     def test_update_entry_should_succeed(self):
         self.__datacatalog_facade.update_entry({})
